@@ -19,7 +19,7 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
 
   // IMPORTANT: Change this password to your desired value
   // This is the password that will unlock the letter
-  const CORRECT_PASSWORD = "retirement2024"
+  const CORRECT_PASSWORD = "XuanLamD5!"
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
