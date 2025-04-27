@@ -14,6 +14,8 @@ import { DecorativeCircle, DecorativeDots, FloatingHearts } from "@/components/d
 import { Logo } from "@/components/logo"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
+import { Noto_Serif } from "next/font/google";
+
 export default function Home() {
   // State for well wishes
   const [wishes, setWishes] = useState<WishType[]>([
@@ -54,27 +56,35 @@ export default function Home() {
 
   // Handle scroll to set active section
   useEffect(() => {
-    const sections = document.querySelectorAll("section[id]");
-    const observerOptions = {
-      root: null, // Use the viewport as the root
-      rootMargin: "0px",
-      threshold: 0.6, // Trigger when 60% of the section is visible
+    setActiveSection("letter") // Set default active section to "letter"
+    const initializeObserver = () => {
+      const sections = document.querySelectorAll("section[id]");
+      const observerOptions = {
+        root: null, // Use the viewport as the root
+        rootMargin: "0px",
+        threshold: 0.6, // Trigger when 60% of the section is visible
+      };
+  
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      }, observerOptions);
+  
+      sections.forEach((section) => observer.observe(section));
+  
+      return () => {
+        sections.forEach((section) => observer.unobserve(section));
+      };
     };
   
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    }, observerOptions);
+    // Initialize the observer on mount and when `isLetterUnlocked` changes
+    const cleanup = initializeObserver();
   
-    sections.forEach((section) => observer.observe(section));
-  
-    return () => {
-      sections.forEach((section) => observer.unobserve(section));
-    };
-  }, []);
+    return cleanup;
+  }, [isLetterUnlocked]); // Reinitialize when `isLetterUnlocked` changes
 
   // Focus search input when search is opened
   useEffect(() => {
@@ -146,208 +156,6 @@ export default function Home() {
     }
   }
 
-  // Improved search functionality that searches as you type
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value
-    setSearchQuery(query)
-
-    if (query.trim().length > 0) {
-      performSearch(query)
-    } else {
-      clearHighlights()
-      setSearchResults({ count: 0, currentIndex: -1 })
-    }
-  }
-
-  // Perform search with the given query
-  const performSearch = (query: string) => {
-    // Clear previous highlights
-    clearHighlights()
-
-    if (!query.trim()) return
-
-    // Get only the content sections we want to search in
-    const contentSections = [
-      document.getElementById("profile"),
-      document.getElementById("letter"),
-      document.getElementById("memories"),
-      document.getElementById("timeline"),
-      document.getElementById("wishes"),
-    ].filter(Boolean) as HTMLElement[]
-
-    const searchText = query.toLowerCase()
-    const matchedElements: Element[] = []
-
-    // Search only within the specified content sections
-    contentSections.forEach((section) => {
-      // Get all text elements within this section
-      const textElements = section.querySelectorAll("p, h2, h3, h4, h5, h6, span:not(.search-highlight)")
-
-      textElements.forEach((el) => {
-        // Skip elements that don't contain text or are part of the search UI
-        if (!el.textContent || el.closest(".search-container") || el.classList.contains("search-highlight")) {
-          return
-        }
-
-        const content = el.textContent.toLowerCase()
-        if (content.includes(searchText)) {
-          // Store original content for restoration later
-          el.setAttribute("data-original-content", el.innerHTML)
-
-          // Highlight matches
-          const regex = new RegExp(`(${searchText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
-          el.innerHTML = el.innerHTML.replace(regex, '<span class="search-highlight bg-yellow-200">$1</span>')
-
-          matchedElements.push(el)
-        }
-      })
-    })
-
-    setHighlightedElements(matchedElements)
-    setSearchResults({
-      count: matchedElements.length,
-      currentIndex: matchedElements.length > 0 ? 0 : -1,
-    })
-
-    // Scroll to first result if found
-    if (matchedElements.length > 0) {
-      highlightCurrentResult(0)
-      matchedElements[0].scrollIntoView({ behavior: "smooth", block: "center" })
-    }
-  }
-
-  // Highlight the current result with a different color
-  const highlightCurrentResult = (index: number) => {
-    // Reset all highlights to default color
-    document.querySelectorAll(".search-highlight").forEach((el) => {
-      el.classList.remove("bg-green-200")
-      el.classList.add("bg-yellow-200")
-    })
-
-    // Highlight the current result with a different color
-    if (highlightedElements[index]) {
-      const highlights = highlightedElements[index].querySelectorAll(".search-highlight")
-      highlights.forEach((el) => {
-        el.classList.remove("bg-yellow-200")
-        el.classList.add("bg-green-200")
-      })
-    }
-  }
-
-  // Navigate between search results
-  const navigateSearchResults = (direction: "next" | "prev") => {
-    if (highlightedElements.length === 0) return
-
-    const newIndex =
-      direction === "next"
-        ? (searchResults.currentIndex + 1) % highlightedElements.length
-        : (searchResults.currentIndex - 1 + highlightedElements.length) % highlightedElements.length
-
-    setSearchResults((prev) => ({ ...prev, currentIndex: newIndex }))
-    highlightCurrentResult(newIndex)
-    highlightedElements[newIndex].scrollIntoView({ behavior: "smooth", block: "center" })
-  }
-
-  // Clear search highlights
-  const clearHighlights = () => {
-    highlightedElements.forEach((el) => {
-      const originalContent = el.getAttribute("data-original-content")
-      if (originalContent) {
-        el.innerHTML = originalContent
-      }
-    })
-    setHighlightedElements([])
-    setSearchResults({ count: 0, currentIndex: -1 })
-  }
-
-  // Close search and clear highlights
-  const closeSearch = () => {
-    clearHighlights()
-    setIsSearchOpen(false)
-    setSearchQuery("")
-  }
-
-  // Add the SearchComponent function inside the main component
-  function SearchComponent() {
-    return (
-      <div className="relative search-container">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsSearchOpen(!isSearchOpen)}
-          title="Tìm kiếm"
-          className="hover:bg-pink-50"
-        >
-          <Search className="h-5 w-5 text-gray-600" />
-        </Button>
-
-        {isSearchOpen && (
-          <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-pink-100 rounded-md shadow-lg p-3 z-10">
-            <div className="flex flex-col gap-2">
-              <div className="flex">
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="flex-1 px-3 py-1 text-sm border border-pink-100 rounded-md focus:outline-none focus:ring-1 focus:ring-pink-300"
-                  placeholder="Tìm kiếm nội dung..."
-                />
-                <Button
-                  type="button"
-                  className="rounded-l-none bg-pink-500 hover:bg-pink-600"
-                  onClick={() => performSearch(searchQuery)}
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {searchResults.count > 0 && (
-                <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
-                  <span>
-                    {searchResults.currentIndex + 1} / {searchResults.count} kết quả
-                  </span>
-                  <div className="flex gap-1">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
-                      onClick={() => navigateSearchResults("prev")}
-                    >
-                      Trước
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
-                      onClick={() => navigateSearchResults("next")}
-                    >
-                      Sau
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
-                      onClick={closeSearch}
-                    >
-                      Đóng
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {searchResults.count === 0 && searchQuery.trim() !== "" && (
-                <div className="text-xs text-gray-500 mt-1">Không tìm thấy kết quả cho "{searchQuery}"</div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
 
   // Fetch wishes from Vercel KV when the component mounts
   useEffect(() => {
@@ -431,15 +239,15 @@ export default function Home() {
         <ul className="space-y-2 text-sm">
           <li className="flex items-start">
             <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-            <span className="text-gray-700">Chủ nhiệm 10 khoá học sinh</span>
+            <span className="text-gray-900">Chủ nhiệm 10 khoá học sinh</span>
           </li>
           <li className="flex items-start">
             <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-            <span className="text-gray-700">Gieo bao ước mơ xanh cho nhiều thế hệ học trò</span>
+            <span className="text-gray-900">Gieo bao ước mơ xanh cho nhiều thế hệ học trò</span>
           </li>
           <li className="flex items-start">
             <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-            <span className="text-gray-700">Giúp HS viết tiếp ước mơ nghề giáo, làm bác sĩ, kĩ sư,...</span>
+            <span className="text-gray-900">Giúp HS viết tiếp ước mơ nghề giáo, làm bác sĩ, kĩ sư,...</span>
           </li>
         </ul>
       </div>
@@ -448,7 +256,7 @@ export default function Home() {
 
       <div className="w-full text-left">
         <h3 className="text-sm font-medium text-pink-500 mb-2">Lời cô nhắn nhủ</h3>
-        <blockquote className="text-gray-700 italic text-sm bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
+        <blockquote className="text-gray-900 italic text-sm bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
           "Cô chúc các con — lứa con út bé bỏng nhưng ra đời sẽ lớn mạnh, thành công, hạnh phúc!"
           <footer className="text-pink-400 mt-1">— N.T Thuý Loan</footer>
         </blockquote>
@@ -464,36 +272,38 @@ export default function Home() {
       <DecorativeDots className="w-full h-full opacity-10" />
 
       {/* Sidebar Navigation - Desktop */}
-      <aside className="hidden md:flex w-64 flex-col border-r print:hidden bg-white sticky top-0 h-screen overflow-hidden">
+      <aside className="hidden sticky top-0 md:flex w-64 flex-col border-r print:hidden bg-white z-10">
         <div className="p-4">
           <Logo />
           <div className="decorative-line mt-1"></div>
         </div>
         <Separator />
-        <nav className="flex-1 p-4 space-y-1 overflow-hidden">
+        <nav className="flex-1 p-4 space-y-1 overflow-hidden md:mt-[-24px]">
           {navigationItems.map((item) => (
             <Link
-              key={item.id}
-              href={`#${item.id}`}
-              className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-pink-50 transition-colors ${
-                activeSection === item.id
-                  ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
-                  : "text-gray-700"
-              } ${item.id === "profile" ? "md:hidden" : ""}`} // Hide "Thông tin giáo viên" on desktop
-              onClick={(e) => {
-                e.preventDefault();
-                const target = document.getElementById(item.id);
-                if (target) {
-                  const navBarHeight = 64; // Adjust this value based on your navbar height
-                  const targetPosition = target.offsetTop - navBarHeight;
-
-                  window.scrollTo({
-                    top: targetPosition,
-                    behavior: "smooth",
-                  });
-                }
-                setActiveSection(item.id);
-              }}
+            key={item.id}
+            href={`#${item.id}`}
+            className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-pink-50 transition-colors ${
+              activeSection === item.id
+                ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
+                : "text-gray-900"
+            } ${item.id === "profile" ? "md:hidden" : ""}`} // Hide profile information on desktop
+            onClick={(e) => {
+              e.preventDefault();
+              const target = document.getElementById(item.id);
+              const mainContent = document.querySelector(".main_content"); // Select the scrollable container
+              if (target && mainContent) {
+                const headerHeight = document.querySelector("header")?.offsetHeight || 0; // Get the header height
+                const targetPosition = (target as HTMLElement).offsetTop - (mainContent as HTMLElement).offsetTop - headerHeight; // Adjust for header and container offset
+            
+                // Scroll the main_content container
+                mainContent.scrollTo({
+                  top: targetPosition,
+                  behavior: "smooth", // Smooth scrolling
+                });
+              }
+              setActiveSection(item.id); // Update the active section
+            }}
             >
               {item.icon}
               {item.label}
@@ -505,7 +315,7 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="border-b print:hidden bg-white relative z-10 overflow-hidden">
+        <header className="sticky top-0 border-b print:hidden bg-white z-10">
           <div className="flex items-center justify-between p-6">
             <div className="flex items-center">
               {/* Mobile menu button */}
@@ -529,7 +339,7 @@ export default function Home() {
                         className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-pink-50 transition-colors ${
                           activeSection === item.id
                             ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
-                            : "text-gray-700"
+                            : "text-gray-900"
                         }`}
                         onClick={() => {
                           setActiveSection(item.id)
@@ -543,17 +353,16 @@ export default function Home() {
                   </nav>
                 </SheetContent>
               </Sheet>
-              <div className="text-xl mb-[-10px]">Thư chính</div>
+              <div className="text-xl/[20px]">Thư chính</div>
             </div>
             <div className="flex items-center space-x-2">
-              <SearchComponent />
               <a
                 href="https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/issues/new"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Button variant="ghost" size="icon" title="Báo Lỗi" className="hover:bg-pink-50">
-                  <Bug className="h-5 w-5 text-gray-600" />
+                  <Bug className="h-5 w-5 text-gray-600 text-xl" />
                 </Button>
               </a>
             </div>
@@ -564,7 +373,7 @@ export default function Home() {
         <main className="flex-1 overflow-auto">
           <div className="flex flex-col lg:flex-row h-full">
             {/* Main Content */}
-            <div className="flex-1 overflow-auto p-4 md:p-6">
+            <div className="main_content flex-1 overflow-auto p-4 md:p-6">
               {/* Teacher Profile Section - Mobile Only */}
               <motion.section
                 id="profile"
@@ -586,20 +395,21 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="max-w-3xl mx-auto bg-white p-4 md:p-8 border border-pink-100 rounded-lg shadow-sm paper-texture">
-                  <div className="mb-6 flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold section-heading">
-                      Viết cho mùa hạ cuối (cuối khoá 2022-2025)
-                    </h2>
-                    <span className="text-sm text-pink-400 font-medium">25 Tháng 5, 2024</span>
-                  </div>
-
+                <div className="mb-6 flex justify-between items-center px-16 pb-5">
+                  <h2 className="text-2xl font-semibold section-heading">
+                    Viết cho mùa hạ cuối (cuối khoá 2022-2025)
+                  </h2>
+                </div>
+              
+                <div className="max-w-3xl mx-auto bg-white p-0 md:p-0 border border-pink-100 shadow-sm ">
                   {isLetterUnlocked ? (
-                    <div className="space-y-4">
+                    <div className="space-y-4 letter paper-texture p-4 md:p-8">
+                      <span className="text-base text-gray-900 font-medium flex justify-end">Hà Nội, ngày 25 tháng 5 năm 2025</span>
+                      <p className="text-3xl flex justify-center m-20 mb-26">Viết cho mùa hạ cuối</p>
                       <p className="text-lg">Kính gửi cô Nguyễn Thị Thuý Loan,</p>
-                      <p className="text-gray-700 leading-relaxed">
-                        Con là Hoàng Xuân Lâm, học sinh lớp 12D5 trường THPT Quang Trung-Đống Đa. nhân dịp mùa hè cuối
-                        khoá 2022–2025 này, con xin được viết bức thư này để bày tỏ lòng biết ơn sâu sắc tới cô, các bạn
+                      <p className="text-gray-900 leading-relaxed">
+                        Con là Hoàng Xuân Lâm, học sinh lớp 12D5 trường THPT Quang Trung-Đống Đa. Nhân dịp mùa hè cuối
+                        khoá 2022–2025, con xin được viết bức thư này để bày tỏ lòng biết ơn sâu sắc tới cô, các bạn
                         và nhà trường đã luôn ở bên con trong suốt năm học vừa qua. Trước hết, con xin kính chúc cô thật
                         nhiều sức khoẻ và luôn hạnh phúc trong cuộc sống và công việc. Mong rằng đó vẫn chưa phải là kết
                         thúc, con mong rằng cô vẫn sẽ tiếp tục truyền nguồn cảm hứng của mình cho cho thật nhiều những
@@ -607,7 +417,7 @@ export default function Home() {
                         nghĩ con là một học sinh như thế nào ạ? Với những đứa nghịch ngợm và ham chơi như tụi con không
                         biết đã gây ảnh hưởng biết bao tới công việc của cô?
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Chỉ còn một khoảng thời gian ngắn ngủi nữa thôi là con không còn được cô nâng niu, giúp đỡ như
                         những ngày nào. Chỉ vỏn vẹn vài chục ngày ấy, ai nấy cũng sẽ phải bước vào kỳ thi quan trọng.
                         Con thú nhận, đây là lần đầu tiên bản thân con viết thư cho một giáo viên của mình. Cũng chính
@@ -615,7 +425,7 @@ export default function Home() {
                         tim mình, xin được gửi gắm những tình yêu, tình cảm, cảm xúc ấy tới lá thư này một cách trọn vẹn
                         nhất. Con là vậy đấy! Văn con có thể không giỏi nhưng con giỏi nhất là bộc lộ cảm xúc!
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Nhìn lại chặng đường ba năm qua dưới mái trường THPT Quang Trung-Đống Đa thân yêu, con không
                         khỏi cảm thấy bồi hồi và xúc động. Đó là những khoảng thời gian tuyệt vời, đầy ắp những kỷ niệm
                         đẹp đẽ và tinh nghịch. Con nhớ những buổi học với cô, ánh mắt hiền hậu khi lần đầu gặp cô, nhớ
@@ -624,7 +434,7 @@ export default function Home() {
                         và những bài học làm người quý giá. Con xin chân thành bày tỏ cảm xúc và lòng biết ơn của mình
                         trước những năm tháng học tập đáng nhớ ấy.
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Nhân đây, con muốn gửi lời tri ân sâu sắc đến cô Loan – người giáo viên tận tuỵ và nghiêm khắc
                         nhưng đầy ắp yêu thương. Cô đã dành cho chúng con biết bao tâm huyết, từng kèm cặp chỉ bảo những
                         bài giảng khó, đồng thời dạy cho chúng con biết bao bài học cuộc sống ý nghĩa. Cảm ơn cô vì
@@ -639,7 +449,7 @@ export default function Home() {
                         tấm lòng của các thầy cô, bạn bè và bố mẹ vì sự hỗ trợ, định hướng và công lao tuyệt vời mà mọi
                         người đã dành cho con.
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Viết tới đây, con xin được kể cho cô nghe về chặng hành trình của mình những năm cấp Ba... Những
                         bước chân đầu tiên dưới mái trường Quang Trung để lại cho con thật nhiều những cảm xúc khó tả.
                         Ngày đầu mới vào lớp, con bị ngạc nhiên bởi đa số học sinh đều là con gái. Ngày nhận lớp và buổi
@@ -657,7 +467,7 @@ export default function Home() {
                         một người bạn chung chí hướng. Kết thúc năm đầu tiên, thực sự con là một đứa nghịch ngợm trong
                         lớp, và con rất thích chơi game, đi chơi cùng các bạn!
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Tới lớp 11, lúc ấy con đã nhớ gần hết tên của các bạn trong lớp, 1 năm học vừa qua đã giúp cho
                         con thoải mái và hoàn toàn hoà tan trong môi trường Quang Trung này. Con bắt đầu làm quen được
                         với những người bạn mới, và rồi bị ngạc nhiên bởi khả năng, thiên phú của các bạn. Bạn Trâm Anh
@@ -677,7 +487,7 @@ export default function Home() {
                         Nhưng rồi đến lúc ấy, con chợt nhận ra một điều vô cùng quan trọng mà con suýt nữa đã đánh mất
                         đó là các bạn.
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Trong suốt những ngày tháng ấy, các bạn vẫn luôn ở bên an ủi và động viên, khích lệ tinh thần
                         con. Bạn Thắng, bạn Phúc Tuệ, Thanh Sơn, Quốc Anh và Quân vẫn luôn là những người bạn ở bên con.
                         Nhờ các bạn mà trên lớp con không cảm thấy cô đơn một chút nào cả. Con vẫn không thể ngờ được
@@ -694,7 +504,7 @@ export default function Home() {
                         giúp đỡ bạn bài tập về nhà môn Toán và điều đó khiến con cảm thấy tập trung hơn cho môn học. Bạn
                         giúp con rất nhiều, con rất biết ơn Phương.
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Ngoài ra, bạn Quân cũng chính là người mở ra cho con một sở thích mới đó chính là chơi đàn. Con
                         rất hay nghe nhạc và những bài hát đều thuộc về những nhóm nhạc, những nghệ sĩ biết chơi đàn, sẽ
                         thật tuyệt vời nếu con có thể vừa đàn và hát những bài hát yêu thích của mình. Bạn Quân đã không
@@ -718,7 +528,7 @@ export default function Home() {
                         của mình. Được là chính mình đối với con là một điều tuyệt vời nhất, để được sống, được cố gắng,
                         được mơ ước và được thực hiện.
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Lá thư vẫn chưa thể đầy đủ nếu thiếu đi công lao của thầy cô, giáo viên bộ môn và cả bố mẹ,
                         những người luôn ở cạnh em xuyên suốt chặng hành trình của mình. Con thực sự rất xin lỗi thầy
                         cô, bố mẹ vì đã để mọi người phải lo lắng rất nhiều. Dù vậy mà thầy cô, cả bố mẹ đã luôn ở bên
@@ -729,7 +539,7 @@ export default function Home() {
                         được ngày hôm nay. Con, Hoàng Xuân Lâm luôn luôn ghi nhớ những công ơn của thầy cô, bố mẹ và
                         chắc chắn đang theo đuổi đam mê, nguyện vọng của mình!
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Thư cũng đã dài, con xin được gửi gắm vào cuối lá thư này những lời hứa chân thành nhất. Con xin
                         hứa sẽ luôn nhớ mãi những lời dạy dỗ của cô và không ngừng nỗ lực học tập, rèn luyện để không
                         phụ lòng mong mỏi của thầy cô và gia đình. Con hy vọng sẽ tiếp tục làm nên nhiều thành tích tốt
@@ -738,7 +548,7 @@ export default function Home() {
                         không xa, em sẽ có cơ hội trở về thăm trường và được gặp lại cô. Nếu có thêm thật nhiều những cơ
                         hội được làm lại, con vẫn sẽ chọn để được là học sinh của cô!
                       </p>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-900 leading-relaxed">
                         Một lần nữa, con xin chân thành cảm ơn và kính chúc cô mọi điều tốt đẹp nhất! Trân trọng cảm ơn
                         cô!
                       </p>
@@ -775,20 +585,24 @@ export default function Home() {
                   ) : (
                     <div className="relative">
                       {/* Blurred content */}
-                      <div className="absolute inset-0 overflow-hidden">
-                        <div className="space-y-4 filter blur-md select-none pointer-events-none">
-                          <p className="text-lg">Kính gửi cô Nguyễn Thị Thuý Loan,</p>
-                          <p className="text-gray-700 leading-relaxed">
-                            Con là Hoàng Xuân Lâm, học sinh lớp 12D5 trường THPT Quang Trung-Đống Đa. nhân dịp mùa hè
-                            cuối khoá 2022–2025 này, con xin được viết bức thư này để bày tỏ lòng biết ơn sâu sắc tới
-                            cô, các bạn và nhà trường đã luôn ở bên con trong suốt năm học vừa qua...
-                          </p>
-                          {/* More blurred paragraphs */}
-                        </div>
-                      </div>
+                      <div className="space-y-4 letter paper-texture p-4 md:p-8 blurred-content">
+                      <span className="text-base text-gray-900 font-medium flex justify-end">Hà Nội, ngày 25 tháng 5 năm 2025</span>
+                      <p className="text-3xl flex justify-center m-20 mb-26">Viết cho mùa hạ cuối</p>
+                      <p className="text-lg">Kính gửi cô Nguyễn Thị Thuý Loan,</p>
+                      <p className="text-gray-900 leading-relaxed">
+                        Con là Hoàng Xuân Lâm, học sinh lớp 12D5 trường THPT Quang Trung-Đống Đa. Nhân dịp mùa hè cuối
+                        khoá 2022–2025, con xin được viết bức thư này để bày tỏ lòng biết ơn sâu sắc tới cô, các bạn
+                        và nhà trường đã luôn ở bên con trong suốt năm học vừa qua. Trước hết, con xin kính chúc cô thật
+                        nhiều sức khoẻ và luôn hạnh phúc trong cuộc sống và công việc. Mong rằng đó vẫn chưa phải là kết
+                        thúc, con mong rằng cô vẫn sẽ tiếp tục truyền nguồn cảm hứng của mình cho cho thật nhiều những
+                        thế hệ học sinh khác. Dạo này cô có khoẻ không ạ? Con luôn ấp ủ trong mình những thắc mắc. Cô
+                        nghĩ con là một học sinh như thế nào ạ? Với những đứa nghịch ngợm và ham chơi như tụi con không
+                        biết đã gây ảnh hưởng biết bao tới công việc của cô?
+                      </p>
+                    </div>
 
                       {/* Password protection overlay */}
-                      <div className="relative bg-white bg-opacity-90 backdrop-blur-sm py-10">
+                      <div className="absolute top-0 w-full h-full bg-white bg-opacity-90 backdrop-blur-sm py-10">
                         <PasswordProtection onUnlock={() => setIsLetterUnlocked(true)} />
                       </div>
                     </div>
@@ -805,8 +619,8 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6 section-heading">Kỷ niệm 12D5</h2>
-                <div className="decorative-line w-32 mb-6"></div>
+                <h2 className="text-2xl font-semibold mb-2 section-heading">Kỷ niệm 12D5</h2>
+                <div className="decorative-line w-48 mb-6"></div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {memories.map((memory, index) => (
                     <motion.div
@@ -831,8 +645,8 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6 section-heading">Hành trình năm học</h2>
-                <div className="decorative-line w-32 mb-6"></div>
+                <h2 className="text-2xl font-semibold mb-2 section-heading">Hành trình năm học</h2>
+                <div className="decorative-line w-64 mb-6"></div>
                 <div className="space-y-4">
                   {timelineItems.map((item, index) => (
                     <motion.div
@@ -858,14 +672,14 @@ export default function Home() {
                 viewport={{ once: true, margin: "-100px" }}
               >
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-6 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
-                <div className="decorative-line w-32 mb-6"></div>
+                <h2 className="text-2xl font-semibold mb-2 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
+                <div className="decorative-line w-[32rem] mb-6"></div>
 
                 {/* Well Wishes Form */}
                 <div className="max-w-2xl mx-auto bg-white p-6 border border-pink-100 rounded-lg shadow-sm mb-8">
                   <form className="space-y-4" onSubmit={handleWishSubmit}>
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-1">
                         Tên
                       </label>
                       <input
@@ -875,12 +689,12 @@ export default function Home() {
                         value={newWish.name}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Tên của bạn"
+                        placeholder="Tên"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="nickname" className="block text-sm font-medium text-gray-900 mb-1">
                         Biệt danh
                       </label>
                       <input
@@ -890,11 +704,11 @@ export default function Home() {
                         value={newWish.nickname}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Biệt danh của bạn (nếu có)"
+                        placeholder="Biệt danh (nếu có)"
                       />
                     </div>
                     <div>
-                      <label htmlFor="relationship" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="relationship" className="block text-sm font-medium text-gray-900 mb-1">
                         Mối quan hệ
                       </label>
                       <input
@@ -904,11 +718,11 @@ export default function Home() {
                         value={newWish.relationship}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Học sinh, Giáo viên, Phụ huynh, v.v."
+                        placeholder="Bạn bè, giáo viên, bố, mẹ, v.v."
                       />
                     </div>
                     <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-1">
                         Lời nhắn của bạn
                       </label>
                       <textarea
@@ -918,7 +732,7 @@ export default function Home() {
                         onChange={handleWishChange}
                         rows={4}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Chia sẻ lời chúc, kỷ niệm hoặc lòng biết ơn của bạn..."
+                        placeholder="Chia sẻ lời chúc, suy nghĩ..."
                         required
                       ></textarea>
                     </div>
@@ -947,7 +761,7 @@ export default function Home() {
                           >
                             <div className="flex items-center">
                               <Sparkles className="h-4 w-4 mr-2 text-green-500" />
-                              Lời nhắn của bạn đã được thêm thành công!
+                              Lời nhắn đã được thêm thành công!
                             </div>
                           </motion.div>
                         )}
@@ -989,7 +803,7 @@ export default function Home() {
                           </div>
                           <span className="text-xs text-gray-400">{wish.date}</span>
                         </div>
-                        <p className="text-gray-700">{wish.message}</p>
+                        <p className="text-gray-900">{wish.message}</p>
                       </motion.div>
                     ))
                   )}
@@ -1038,7 +852,7 @@ function MemoryCard({ title, date, description, images = [] }: MemoryCardProps) 
       <div className="p-4">
         <h3 className="font-medium text-lg mb-1">{title}</h3>
         <p className="text-pink-500 text-sm mb-2">{date}</p>
-        <p className="text-gray-700">{description}</p>
+        <p className="text-gray-900">{description}</p>
       </div>
     </div>
   )
@@ -1057,7 +871,7 @@ function TimelineItem({ date, title, description }: TimelineItemProps) {
         <span className="text-sm font-medium text-pink-500">{date}</span>
       </div>
       <h3 className="font-medium text-lg mb-1">{title}</h3>
-      <p className="text-gray-700">{description}</p>
+      <p className="text-gray-900">{description}</p>
     </div>
   )
 }

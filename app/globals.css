@@ -16,10 +16,6 @@
   --card-foreground: 15, 23, 42;
 }
 
-* {
-  transition: all 0.2s ease-in-out;
-}
-
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
     "Helvetica Neue", sans-serif;
@@ -30,7 +26,8 @@ body {
 /* Decorative elements */
 .decorative-line {
   height: 3px;
-  background: linear-gradient(90deg, rgba(var(--primary), 0.7) 0%, rgba(var(--secondary), 0.7) 100%);
+  background: #ff6040;
+  background: linear-gradient(90deg,rgba(255, 96, 64, 0.7) 0%, rgba(255, 189, 247, 0.7) 100%);
   border-radius: 3px;
 }
 
@@ -65,7 +62,8 @@ body {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(var(--primary), 0.8), rgba(var(--secondary), 0.8));
+  background: linear-gradient(135deg, rgb(238 91 163), rgb(249 168 212));
+  opacity: 0.8;
   left: -6px;
   top: 50%;
   transform: translateY(-50%);
@@ -101,10 +99,27 @@ h6 {
   filter: invert(1);
 }
 
+.letter {
+  font-family: "Noto_Serif", serif !important;
+  font-size: 18px;
+}
+
 /* Paper texture for letter */
 .paper-texture {
   background-color: #fff;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23f5f5f5' fill-opacity='0.4'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  box-shadow: 0 0 1.2rem rgb(0 0 0 / 0.2);
+  background-image: url("https://static.vecteezy.com/system/resources/previews/013/396/404/non_2x/crumpled-paper-texture-realisric-crease-sheet-free-vector.jpg");
+  background-size: contain;
+}
+
+.leading-relaxed::first-letter {
+  margin-left: 24px;
+  padding: 0 1;
+}
+
+.\[\&_svg\]\:size-4 svg {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
 }
 
 /* Subtle animations */
@@ -134,7 +149,7 @@ h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(var(--primary), 0.3);
+  background: rgba(var(--primary), 0.5);
   border-radius: 4px;
 }
 
@@ -142,27 +157,6 @@ h6 {
   background: rgba(var(--primary), 0.5);
 }
 
-/* Search highlight styles */
-.search-highlight {
-  padding: 0 2px;
-  border-radius: 2px;
-  transition: background-color 0.2s ease;
-}
-
-.search-highlight.bg-yellow-200 {
-  background-color: rgba(254, 240, 138, 0.7);
-}
-
-.search-highlight.bg-green-200 {
-  background-color: rgba(187, 247, 208, 0.7);
-  font-weight: 500;
-}
-
-/* Fix for search input focus */
-.search-container input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(var(--primary), 0.3);
-}
 
 /* Improve mobile responsiveness */
 @media (max-width: 640px) {

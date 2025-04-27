@@ -1,9 +1,9 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Noto_Sans } from "next/font/google"
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Noto_Sans({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Xuân Lâm - Viết cho mùa hạ cuối",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
         url: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format",
         width: 1200,
         height: 630,
-        alt: "Xuân Lâm -Viết cho mùa hạ cuối",
+        alt: "Xuân Lâm - Viết cho mùa hạ cuối",
       },
     ],
     type: "website",
