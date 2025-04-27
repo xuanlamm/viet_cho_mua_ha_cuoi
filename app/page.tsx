@@ -205,7 +205,7 @@ export default function Home() {
     <div className="flex flex-col items-center text-center mb-6">
       <div className="relative">
         <Avatar className="h-24 w-24 mb-4 ring-4 ring-pink-100 ring-offset-2">
-          <img src={"https://i.imgur.com/kBQrrlb.jpeg"} alt="Cô Loan" />
+          <img src={"/kBQrrlb.jpeg"} alt="Cô Loan" />
         </Avatar>
         <div className="absolute -bottom-2 -right-2 bg-pink-100 rounded-full p-1">
           <Heart className="h-4 w-4 text-pink-500" />
@@ -257,7 +257,7 @@ export default function Home() {
       <div className="w-full text-left">
         <h3 className="text-sm font-medium text-pink-500 mb-2">Lời cô nhắn nhủ</h3>
         <blockquote className="text-gray-900 italic text-sm bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
-          "Cô chúc các con — lứa con út bé bỏng nhưng ra đời sẽ lớn mạnh, thành công, hạnh phúc!"
+          "Cô chúc các con - lứa con út bé bỏng nhưng ra đời sẽ lớn mạnh, thành công, hạnh phúc!"
           <footer className="text-pink-400 mt-1">— N.T Thuý Loan</footer>
         </blockquote>
       </div>
@@ -353,7 +353,7 @@ export default function Home() {
                   </nav>
                 </SheetContent>
               </Sheet>
-              <div className="text-xl/[20px]">Thư chính</div>
+              <img src={"/xuanlam_signature_black.png"} alt={"Xuân Lâm"} className="w-32 object-cover" />
             </div>
             <div className="flex items-center space-x-2">
               <a
@@ -395,17 +395,18 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="mb-6 flex justify-between items-center px-16 pb-5">
-                  <h2 className="text-2xl font-semibold section-heading">
+                <div className="letter-container mb-6 flex justify-left items-center px-16 pb-5 mt-auto">
+                  <h2 className="text-2xl font-medium section-heading">
                     Viết cho mùa hạ cuối (cuối khoá 2022-2025)
                   </h2>
+                  <div className="small-button ml-3 mt-auto mb-[0.35rem] inline text-xs bg-[#ddd] px-1 py-[0.1rem] text-[#666] rounded-[3px]"><span>Hộp thư đến</span></div>
                 </div>
               
                 <div className="max-w-3xl mx-auto bg-white p-0 md:p-0 border border-pink-100 shadow-sm ">
                   {isLetterUnlocked ? (
                     <div className="space-y-4 letter paper-texture p-4 md:p-8">
-                      <span className="text-base text-gray-900 font-medium flex justify-end">Hà Nội, ngày 25 tháng 5 năm 2025</span>
-                      <p className="text-3xl flex justify-center m-20 mb-26">Viết cho mùa hạ cuối</p>
+                      <span className="text-base text-gray-900 font-medium flex justify-end pt-6">Hà Nội, ngày 25 tháng 5 năm 2025</span>
+                      <p className="text-3xl flex justify-center mt-26 mb-32 letter-title">Viết cho mùa hạ cuối</p>
                       <p className="text-lg">Kính gửi cô Nguyễn Thị Thuý Loan,</p>
                       <p className="text-gray-900 leading-relaxed">
                         Con là Hoàng Xuân Lâm, học sinh lớp 12D5 trường THPT Quang Trung-Đống Đa. Nhân dịp mùa hè cuối
@@ -556,7 +557,7 @@ export default function Home() {
                       {/* Add student photo and signature section */}
                       <div className="flex flex-col md:flex-row gap-6 mt-8 mb-4">
                         <div className="flex-1">
-                          <div className="border-2 border-dashed border-pink-200 rounded-md p-4 flex flex-col items-center justify-center min-h-[200px]">
+                          <div className="border-2 border-dashed border-pink-300 rounded-md p-4 flex flex-col items-center justify-center min-h-[200px]">
                             <p className="text-pink-400 text-sm mb-2">[Ảnh cá nhân]</p>
                             <div className="w-32 h-40 bg-gray-100 flex items-center justify-center">
                               <img
@@ -570,13 +571,14 @@ export default function Home() {
                         <div className="flex-1">
                           <div className="flex flex-col">
                             <p className="font-medium">Học trò gần nghịch ngợm nhất 12D5 của cô,</p>
-                            <div className="border-b border-dashed border-gray-300 h-16 my-2 flex items-center justify-center">
-                              <p className="text-gray-400 italic">[Ký tên]</p>
+                            <div className="border-b border-dashed border-gray-400 h-fit my-2 flex flex-col items-center justify-center">
+                              <img src={"/xuanlam_signature_black.png"} alt={"Xuân Lâm"} className="w-48 object-cover" />
+                              <p className="text-gray-900 italic">Hoàng Xuân Lâm</p>
                             </div>
-                            <p className="font-semibold">Hoàng Xuân Lâm</p>
-                            <div className="mt-4 text-sm text-gray-600">
+                            <div className="mt-4 text-sm text-gray-900">
                               <p>Địa chỉ liên lạc: Số 19, ngách 122/22 đường Láng, Thịnh Quang, Đống Đa, Hà Nội.</p>
-                              <p>Số điện thoại: 0962913298 – Email: hoangxuanlam2007@outlook.com</p>
+                              <p>Số điện thoại: 0962913298</p>
+                              <p>Email: hoangxuanlam2007@outlook.com</p>
                             </div>
                           </div>
                         </div>
@@ -672,8 +674,8 @@ export default function Home() {
                 viewport={{ once: true, margin: "-100px" }}
               >
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-2 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
-                <div className="decorative-line w-[32rem] mb-6"></div>
+                <h2 className="text-2xl font-semibold mb-2 section-heading">Trở thành 1 phần của bức thư ❤️</h2>
+                <div className="wishes-dec-line decorative-line w-[32rem] mb-6"></div>
 
                 {/* Well Wishes Form */}
                 <div className="max-w-2xl mx-auto bg-white p-6 border border-pink-100 rounded-lg shadow-sm mb-8">

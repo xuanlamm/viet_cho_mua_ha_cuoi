@@ -108,7 +108,7 @@ h6 {
 .paper-texture {
   background-color: #fff;
   box-shadow: 0 0 1.2rem rgb(0 0 0 / 0.2);
-  background-image: url("https://static.vecteezy.com/system/resources/previews/013/396/404/non_2x/crumpled-paper-texture-realisric-crease-sheet-free-vector.jpg");
+  background-image: url("../public/paper_texture.png");
   background-size: contain;
 }
 
@@ -170,5 +170,22 @@ h6 {
 
   .wish-card {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .letter-container {
+    padding: 0 1rem;
+    display: block;
+  }
+  .section-heading {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .small-button {
+    margin-left: 0;
+  }
+  .wishes-dec-line {
+    width: 24rem;
   }
 }
