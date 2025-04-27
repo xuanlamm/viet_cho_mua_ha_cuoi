@@ -1,0 +1,97 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Lock, Heart } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+
+interface PasswordProtectionProps {
+  onUnlock: () => void
+}
+
+export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // IMPORTANT: Change this password to your desired value
+  // This is the password that will unlock the letter
+  const CORRECT_PASSWORD = "retirement2024"
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError(null)
+
+    // Simulate a slight delay for better UX
+    setTimeout(() => {
+      if (password === CORRECT_PASSWORD) {
+        onUnlock()
+      } else {
+        setError("Password incorrect")
+      }
+      setIsSubmitting(false)
+    }, 500)
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center p-8 text-center">
+      <motion.div
+        className="mb-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center mx-auto mb-4">
+          <Lock className="h-8 w-8 text-pink-400" />
+        </div>
+        <h3 className="text-xl font-medium mb-2 gradient-text">This letter is protected</h3>
+        <p className="text-gray-600">Please enter the password to view this heartfelt message</p>
+      </motion.div>
+
+      <motion.form
+        onSubmit={handleSubmit}
+        className="w-full max-w-xs space-y-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <div className="relative">
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password"
+            className="w-full pr-10 border-pink-100 focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50"
+            autoFocus
+          />
+          <Heart className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-pink-300" />
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white transition-all duration-300"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Checking..." : "Unlock Letter"}
+        </Button>
+
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-red-500 text-sm"
+            >
+              {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.form>
+    </div>
+  )
+}

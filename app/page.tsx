@@ -4,11 +4,13 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Pen, Clock, Camera, Heart, Menu, Search, Bug, ChevronDown, ChevronUp } from "lucide-react"
+import { Pen, Clock, Camera, Heart, Menu, Search, Bug, ChevronDown, ChevronUp, Gift, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { motion, AnimatePresence } from "framer-motion"
+import { PasswordProtection } from "@/components/password-protection"
+import { DecorativeCircle, DecorativeDots, FloatingHearts } from "@/components/decorative-elements"
 
 export default function Home() {
   // State for well wishes
@@ -40,6 +42,7 @@ export default function Home() {
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [isLetterUnlocked, setIsLetterUnlocked] = useState(false)
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
@@ -237,12 +240,18 @@ export default function Home() {
   function SearchComponent() {
     return (
       <div className="relative search-container">
-        <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(!isSearchOpen)} title="Search">
-          <Search className="h-5 w-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsSearchOpen(!isSearchOpen)}
+          title="Search"
+          className="hover:bg-pink-50"
+        >
+          <Search className="h-5 w-5 text-gray-600" />
         </Button>
 
         {isSearchOpen && (
-          <div className="absolute right-0 top-full mt-2 w-80 bg-white border rounded-md shadow-lg p-3 z-10">
+          <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-pink-100 rounded-md shadow-lg p-3 z-10">
             <form onSubmit={handleSearch} className="flex flex-col gap-2">
               <div className="flex">
                 <input
@@ -250,10 +259,13 @@ export default function Home() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-3 py-1 text-sm border rounded-l-md focus:outline-none focus:ring-1 focus:ring-gray-300"
+                  className="flex-1 px-3 py-1 text-sm border border-pink-100 rounded-l-md focus:outline-none focus:ring-1 focus:ring-pink-300"
                   placeholder="Search content..."
                 />
-                <Button type="submit" className="rounded-l-none">
+                <Button
+                  type="submit"
+                  className="rounded-l-none bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600"
+                >
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -268,7 +280,7 @@ export default function Home() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="h-6 px-2 text-xs"
+                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
                       onClick={() => navigateSearchResults("prev")}
                     >
                       Previous
@@ -277,7 +289,7 @@ export default function Home() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="h-6 px-2 text-xs"
+                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
                       onClick={() => navigateSearchResults("next")}
                     >
                       Next
@@ -286,7 +298,7 @@ export default function Home() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="h-6 px-2 text-xs"
+                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
                       onClick={closeSearch}
                     >
                       Close
@@ -340,11 +352,17 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="flex h-screen bg-white print:block">
+    <div className="flex h-screen bg-white print:block relative overflow-hidden">
+      {/* Decorative background elements */}
+      <DecorativeCircle className="w-96 h-96 -top-20 -left-20" />
+      <DecorativeCircle className="w-96 h-96 -bottom-20 -right-20" />
+      <DecorativeDots className="w-full h-full opacity-10" />
+
       {/* Sidebar Navigation */}
-      <aside className="hidden md:flex w-64 flex-col border-r print:hidden">
+      <aside className="hidden md:flex w-64 flex-col border-r print:hidden bg-white relative z-10">
         <div className="p-4">
-          <h1 className="text-xl font-semibold">Retirement Letter</h1>
+          <h1 className="text-xl font-semibold gradient-text">Retirement Letter</h1>
+          <div className="decorative-line w-1/2 mt-2"></div>
         </div>
         <Separator />
         <nav className="flex-1 p-4 space-y-1">
@@ -357,8 +375,10 @@ export default function Home() {
             <Link
               key={item.id}
               href={`#${item.id}`}
-              className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100 ${
-                activeSection === item.id ? "bg-gray-100 text-gray-900 font-medium" : "text-gray-700"
+              className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-pink-50 transition-colors ${
+                activeSection === item.id
+                  ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
+                  : "text-gray-700"
               }`}
               onClick={() => setActiveSection(item.id)}
             >
@@ -372,13 +392,15 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="border-b print:hidden">
+        <header className="border-b print:hidden bg-white relative z-10">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center">
-              <Button variant="ghost" size="icon" className="md:hidden mr-2">
-                <Menu className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="md:hidden mr-2 hover:bg-pink-50">
+                <Menu className="h-5 w-5 text-gray-600" />
               </Button>
-              <h1 className="text-xl font-semibold">Teacher Tribute</h1>
+              <h1 className="text-xl font-semibold">
+                <span className="gradient-text">Teacher Tribute</span>
+              </h1>
             </div>
             <div className="flex items-center space-x-2">
               <SearchComponent />
@@ -387,8 +409,8 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="ghost" size="icon" title="Report Bug">
-                  <Bug className="h-5 w-5" />
+                <Button variant="ghost" size="icon" title="Report Bug" className="hover:bg-pink-50">
+                  <Bug className="h-5 w-5 text-gray-600" />
                 </Button>
               </a>
             </div>
@@ -403,61 +425,92 @@ export default function Home() {
               {/* Letter Section */}
               <motion.section
                 id="letter"
-                className="mb-12"
+                className="mb-12 relative"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="max-w-3xl mx-auto bg-white p-8 border rounded-lg shadow-sm">
+                <div className="max-w-3xl mx-auto bg-white p-8 border border-pink-100 rounded-lg shadow-sm paper-texture">
                   <div className="mb-6 flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold">Retirement Letter</h2>
-                    <span className="text-sm text-gray-500">May 2024</span>
+                    <h2 className="text-2xl font-semibold gradient-text">Retirement Letter</h2>
+                    <span className="text-sm text-pink-400 font-medium">May 2024</span>
                   </div>
-                  <div className="space-y-4">
-                    <p className="text-lg">Dear [Teacher's Name],</p>
-                    <p className="text-gray-700 leading-relaxed">
-                      As I prepare to graduate and embark on my university journey, I wanted to take a moment to express
-                      my deepest gratitude for the profound impact you've had on my education and personal growth.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      Your passion for teaching has ignited a love for learning within me that I will carry throughout
-                      my life. The knowledge, wisdom, and guidance you've shared have been invaluable, and I am truly
-                      grateful for the countless hours you've dedicated to helping me and my classmates succeed.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      I'll never forget how you [specific memory or lesson that was meaningful]. That moment, along with
-                      many others, has shaped my perspective and influenced my decision to pursue [field of study] at
-                      university.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      As you retire, please know that your legacy lives on in the hearts and minds of all the students
-                      whose lives you've touched. Your dedication to education has created ripples that will continue to
-                      spread far beyond the classroom.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      I wish you all the best in this new chapter of your life. May it be filled with joy, relaxation,
-                      and new adventures.
-                    </p>
-                    <div className="pt-4">
-                      <p className="text-gray-700">With immense gratitude and respect,</p>
-                      <p className="font-semibold mt-2">[Your Name]</p>
-                      <p className="text-gray-500 text-sm">Class of 2024</p>
+
+                  {isLetterUnlocked ? (
+                    <div className="space-y-4">
+                      <p className="text-lg">Dear [Teacher's Name],</p>
+                      <p className="text-gray-700 leading-relaxed">
+                        As I prepare to graduate and embark on my university journey, I wanted to take a moment to
+                        express my deepest gratitude for the profound impact you've had on my education and personal
+                        growth.
+                      </p>
+                      <p className="text-gray-700 leading-relaxed">
+                        Your passion for teaching has ignited a love for learning within me that I will carry throughout
+                        my life. The knowledge, wisdom, and guidance you've shared have been invaluable, and I am truly
+                        grateful for the countless hours you've dedicated to helping me and my classmates succeed.
+                      </p>
+                      <p className="text-gray-700 leading-relaxed">
+                        I'll never forget how you [specific memory or lesson that was meaningful]. That moment, along
+                        with many others, has shaped my perspective and influenced my decision to pursue [field of
+                        study] at university.
+                      </p>
+                      <p className="text-gray-700 leading-relaxed">
+                        As you retire, please know that your legacy lives on in the hearts and minds of all the students
+                        whose lives you've touched. Your dedication to education has created ripples that will continue
+                        to spread far beyond the classroom.
+                      </p>
+                      <p className="text-gray-700 leading-relaxed">
+                        I wish you all the best in this new chapter of your life. May it be filled with joy, relaxation,
+                        and new adventures.
+                      </p>
+                      <div className="pt-4">
+                        <p className="text-gray-700">With immense gratitude and respect,</p>
+                        <p className="font-semibold mt-2">[Your Name]</p>
+                        <p className="text-pink-400 text-sm">Class of 2024</p>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="relative">
+                      {/* Blurred content */}
+                      <div className="absolute inset-0 overflow-hidden">
+                        <div className="space-y-4 filter blur-md select-none pointer-events-none">
+                          <p className="text-lg">Dear [Teacher's Name],</p>
+                          <p className="text-gray-700 leading-relaxed">
+                            As I prepare to graduate and embark on my university journey, I wanted to take a moment to
+                            express my deepest gratitude for the profound impact you've had on my education and personal
+                            growth.
+                          </p>
+                          <p className="text-gray-700 leading-relaxed">
+                            Your passion for teaching has ignited a love for learning within me that I will carry
+                            throughout my life. The knowledge, wisdom, and guidance you've shared have been invaluable,
+                            and I am truly grateful for the countless hours you've dedicated to helping me and my
+                            classmates succeed.
+                          </p>
+                          {/* More blurred paragraphs */}
+                        </div>
+                      </div>
+
+                      {/* Password protection overlay */}
+                      <div className="relative bg-white bg-opacity-90 backdrop-blur-sm py-10">
+                        <PasswordProtection onUnlock={() => setIsLetterUnlocked(true)} />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.section>
 
               {/* Memories Section */}
               <motion.section
                 id="memories"
-                className="mb-12"
+                className="mb-12 relative"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6">Cherished Memories</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h2 className="text-2xl font-semibold mb-6 gradient-text">Cherished Memories</h2>
+                <div className="decorative-line w-32 mb-6"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {memories.map((memory, index) => (
                     <motion.div
                       key={index}
@@ -475,13 +528,14 @@ export default function Home() {
               {/* Timeline Section */}
               <motion.section
                 id="timeline"
-                className="mb-12"
+                className="mb-12 relative"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6">Our Journey</h2>
+                <h2 className="text-2xl font-semibold mb-6 gradient-text">Our Journey</h2>
+                <div className="decorative-line w-32 mb-6"></div>
                 <div className="space-y-4">
                   {timelineItems.map((item, index) => (
                     <motion.div
@@ -500,16 +554,18 @@ export default function Home() {
               {/* Wishes Section */}
               <motion.section
                 id="wishes"
-                className="mb-12"
+                className="mb-12 relative"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6">Well Wishes</h2>
+                <FloatingHearts />
+                <h2 className="text-2xl font-semibold mb-6 gradient-text">Well Wishes</h2>
+                <div className="decorative-line w-32 mb-6"></div>
 
                 {/* Well Wishes Form */}
-                <div className="max-w-2xl mx-auto bg-white p-6 border rounded-lg shadow-sm mb-8">
+                <div className="max-w-2xl mx-auto bg-white p-6 border border-pink-100 rounded-lg shadow-sm mb-8">
                   <form className="space-y-4" onSubmit={handleWishSubmit}>
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -521,7 +577,7 @@ export default function Home() {
                         name="name"
                         value={newWish.name}
                         onChange={handleWishChange}
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200"
+                        className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
                         placeholder="Your name"
                         required
                       />
@@ -536,7 +592,7 @@ export default function Home() {
                         name="relationship"
                         value={newWish.relationship}
                         onChange={handleWishChange}
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200"
+                        className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
                         placeholder="Student, Colleague, Parent, etc."
                       />
                     </div>
@@ -550,7 +606,7 @@ export default function Home() {
                         value={newWish.message}
                         onChange={handleWishChange}
                         rows={4}
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200"
+                        className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
                         placeholder="Share your well wishes, memories, or gratitude..."
                         required
                       ></textarea>
@@ -558,10 +614,17 @@ export default function Home() {
                     <div className="relative">
                       <Button
                         type="submit"
-                        className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+                        className="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white"
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? "Sending..." : "Send Your Wishes"}
+                        {isSubmitting ? (
+                          "Sending..."
+                        ) : (
+                          <span className="flex items-center">
+                            <Gift className="mr-2 h-4 w-4" />
+                            Send Your Wishes
+                          </span>
+                        )}
                       </Button>
                       <AnimatePresence>
                         {submitSuccess && (
@@ -571,7 +634,10 @@ export default function Home() {
                             exit={{ opacity: 0 }}
                             className="absolute top-full left-0 right-0 mt-2 p-2 bg-green-50 text-green-700 text-sm rounded-md border border-green-200"
                           >
-                            Your message has been added successfully!
+                            <div className="flex items-center">
+                              <Sparkles className="h-4 w-4 mr-2 text-green-500" />
+                              Your message has been added successfully!
+                            </div>
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -583,7 +649,7 @@ export default function Home() {
                 <div className="max-w-2xl mx-auto space-y-4">
                   {isLoading ? (
                     <div className="text-center py-8">
-                      <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-gray-300 border-r-gray-600"></div>
+                      <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-pink-200 border-r-pink-500"></div>
                       <p className="mt-2 text-gray-600">Loading wishes...</p>
                     </div>
                   ) : loadError ? (
@@ -602,14 +668,14 @@ export default function Home() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.05 }}
-                        className="bg-white p-4 border rounded-lg shadow-sm"
+                        className="wish-card bg-white p-5 border border-pink-100 rounded-lg shadow-sm"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="font-medium">{wish.name}</h3>
-                            {wish.relationship && <p className="text-sm text-gray-500">{wish.relationship}</p>}
+                            {wish.relationship && <p className="text-sm text-pink-400">{wish.relationship}</p>}
                           </div>
-                          <span className="text-xs text-gray-500">{wish.date}</span>
+                          <span className="text-xs text-gray-500 bg-pink-50 px-2 py-1 rounded-full">{wish.date}</span>
                         </div>
                         <p className="text-sm text-gray-700">{wish.message}</p>
                       </motion.div>
@@ -620,62 +686,67 @@ export default function Home() {
             </div>
 
             {/* Teacher Profile Sidebar */}
-            <div className="w-full md:w-80 border-l p-6 bg-gray-50 print:hidden">
+            <div className="w-full md:w-80 border-l p-6 bg-gradient-to-b from-white to-pink-50 print:hidden">
               <div className="flex flex-col items-center text-center mb-6">
-                <Avatar className="h-24 w-24 mb-4">
-                  <div className="bg-gray-200 h-full w-full flex items-center justify-center text-2xl font-semibold text-gray-600">
-                    T
+                <div className="relative">
+                  <Avatar className="h-24 w-24 mb-4 ring-4 ring-pink-100 ring-offset-2">
+                    <div className="bg-gradient-to-br from-pink-200 to-pink-300 h-full w-full flex items-center justify-center text-2xl font-semibold text-white">
+                      T
+                    </div>
+                  </Avatar>
+                  <div className="absolute -bottom-2 -right-2 bg-pink-100 rounded-full p-1">
+                    <Heart className="h-4 w-4 text-pink-500" />
                   </div>
-                </Avatar>
-                <h2 className="text-xl font-semibold">[Teacher's Name]</h2>
-                <p className="text-gray-500">[Subject] Teacher</p>
+                </div>
+                <h2 className="text-xl font-semibold mt-2">[Teacher's Name]</h2>
+                <p className="text-pink-500">[Subject] Teacher</p>
                 <p className="text-gray-500 text-sm">[School Name]</p>
               </div>
 
-              <Separator className="my-4" />
+              <Separator className="my-4 bg-pink-100" />
 
               <div className="space-y-3">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Years of Service</h3>
+                  <h3 className="text-sm font-medium text-pink-500">Years of Service</h3>
                   <p className="text-gray-900">1990 - 2024</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Subjects Taught</h3>
+                  <h3 className="text-sm font-medium text-pink-500">Subjects Taught</h3>
                   <p className="text-gray-900">[Subject 1], [Subject 2]</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Education</h3>
+                  <h3 className="text-sm font-medium text-pink-500">Education</h3>
                   <p className="text-gray-900">[University Name]</p>
                 </div>
               </div>
 
-              <Separator className="my-4" />
+              <Separator className="my-4 bg-pink-100" />
 
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Notable Achievements</h3>
+                <h3 className="text-sm font-medium text-pink-500 mb-2">Notable Achievements</h3>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start">
-                    <span className="h-1.5 w-1.5 rounded-full bg-gray-300 mt-1.5 mr-2"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
                     <span className="text-gray-700">[Achievement 1]</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="h-1.5 w-1.5 rounded-full bg-gray-300 mt-1.5 mr-2"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
                     <span className="text-gray-700">[Achievement 2]</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="h-1.5 w-1.5 rounded-full bg-gray-300 mt-1.5 mr-2"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
                     <span className="text-gray-700">[Achievement 3]</span>
                   </li>
                 </ul>
               </div>
 
-              <Separator className="my-4" />
+              <Separator className="my-4 bg-pink-100" />
 
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Favorite Quote</h3>
-                <blockquote className="text-gray-700 italic text-sm">
+                <h3 className="text-sm font-medium text-pink-500 mb-2">Favorite Quote</h3>
+                <blockquote className="text-gray-700 italic text-sm bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
                   "Education is not the filling of a pail, but the lighting of a fire."
-                  <footer className="text-gray-500 mt-1">— W.B. Yeats</footer>
+                  <footer className="text-pink-400 mt-1">— W.B. Yeats</footer>
                 </blockquote>
               </div>
             </div>
@@ -701,30 +772,30 @@ function MemoryCard({
   const [expanded, setExpanded] = useState(false)
 
   return (
-    <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow bg-white">
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-medium">{title}</h3>
-          <span className="text-xs text-gray-500">{date}</span>
+    <div className="memory-card card-hover bg-white">
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-3">
+          <h3 className="font-medium text-gray-800">{title}</h3>
+          <span className="text-xs bg-pink-50 text-pink-500 px-2 py-1 rounded-full">{date}</span>
         </div>
 
         {description.length > 100 && !expanded ? (
           <>
-            <p className="text-sm text-gray-700 mb-1">{description.substring(0, 100)}...</p>
+            <p className="text-sm text-gray-700 mb-2">{description.substring(0, 100)}...</p>
             <button
               onClick={() => setExpanded(true)}
-              className="text-xs flex items-center text-gray-500 hover:text-gray-700"
+              className="text-xs flex items-center text-pink-500 hover:text-pink-600 transition-colors"
             >
               Read more <ChevronDown className="h-3 w-3 ml-1" />
             </button>
           </>
         ) : (
           <>
-            <p className="text-sm text-gray-700 mb-1">{description}</p>
+            <p className="text-sm text-gray-700 mb-2">{description}</p>
             {description.length > 100 && (
               <button
                 onClick={() => setExpanded(false)}
-                className="text-xs flex items-center text-gray-500 hover:text-gray-700"
+                className="text-xs flex items-center text-pink-500 hover:text-pink-600 transition-colors"
               >
                 Show less <ChevronUp className="h-3 w-3 ml-1" />
               </button>
@@ -745,6 +816,7 @@ function MemoryCard({
                         alt={`Memory image for ${title}`}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                   ),
               )}
@@ -761,15 +833,15 @@ function TimelineItem({ year, title, description }: { year: string; title: strin
   return (
     <div className="flex">
       <div className="flex flex-col items-center mr-4">
-        <div className="w-px h-full bg-gray-200"></div>
-        <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center">
-          <div className="w-3 h-3 rounded-full bg-gray-500"></div>
+        <div className="w-px h-full bg-pink-100"></div>
+        <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center">
+          <div className="w-3 h-3 rounded-full bg-pink-400"></div>
         </div>
-        <div className="w-px h-full bg-gray-200"></div>
+        <div className="w-px h-full bg-pink-100"></div>
       </div>
       <div className="pb-8 pt-1">
-        <span className="text-xs font-medium text-gray-500 block">{year}</span>
-        <h3 className="text-base font-medium mt-1">{title}</h3>
+        <span className="text-xs font-medium text-pink-500 bg-pink-50 px-2 py-1 rounded-full">{year}</span>
+        <h3 className="text-base font-medium mt-2">{title}</h3>
         <p className="text-sm text-gray-700 mt-1">{description}</p>
       </div>
     </div>
