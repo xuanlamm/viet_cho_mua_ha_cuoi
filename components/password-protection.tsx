@@ -48,7 +48,7 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
         <div className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center mx-auto mb-4">
           <Lock className="h-8 w-8 text-pink-400" />
         </div>
-        <h3 className="text-xl font-medium mb-2 gradient-text">This letter is protected</h3>
+        <h3 className="text-xl font-medium mb-2 text-pink-500">This letter is protected</h3>
         <p className="text-gray-600">Please enter the password to view this heartfelt message</p>
       </motion.div>
 
@@ -73,7 +73,7 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
 
         <Button
           type="submit"
-          className="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white transition-all duration-300"
+          className="w-full bg-pink-500 hover:bg-pink-600 text-white transition-all duration-300"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Checking..." : "Unlock Letter"}

@@ -262,10 +262,7 @@ export default function Home() {
                   className="flex-1 px-3 py-1 text-sm border border-pink-100 rounded-l-md focus:outline-none focus:ring-1 focus:ring-pink-300"
                   placeholder="Search content..."
                 />
-                <Button
-                  type="submit"
-                  className="rounded-l-none bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600"
-                >
+                <Button type="submit" className="rounded-l-none bg-pink-500 hover:bg-pink-600">
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -361,7 +358,7 @@ export default function Home() {
       {/* Sidebar Navigation */}
       <aside className="hidden md:flex w-64 flex-col border-r print:hidden bg-white relative z-10">
         <div className="p-4">
-          <h1 className="text-xl font-semibold gradient-text">Retirement Letter</h1>
+          <h1 className="text-xl font-semibold text-pink-500">Retirement Letter</h1>
           <div className="decorative-line w-1/2 mt-2"></div>
         </div>
         <Separator />
@@ -398,9 +395,7 @@ export default function Home() {
               <Button variant="ghost" size="icon" className="md:hidden mr-2 hover:bg-pink-50">
                 <Menu className="h-5 w-5 text-gray-600" />
               </Button>
-              <h1 className="text-xl font-semibold">
-                <span className="gradient-text">Teacher Tribute</span>
-              </h1>
+              <h1 className="text-xl font-semibold text-pink-500">Teacher Tribute</h1>
             </div>
             <div className="flex items-center space-x-2">
               <SearchComponent />
@@ -432,7 +427,7 @@ export default function Home() {
               >
                 <div className="max-w-3xl mx-auto bg-white p-8 border border-pink-100 rounded-lg shadow-sm paper-texture">
                   <div className="mb-6 flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold gradient-text">Retirement Letter</h2>
+                    <h2 className="text-2xl font-semibold section-heading">Retirement Letter</h2>
                     <span className="text-sm text-pink-400 font-medium">May 2024</span>
                   </div>
 
@@ -508,7 +503,7 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6 gradient-text">Cherished Memories</h2>
+                <h2 className="text-2xl font-semibold mb-6 section-heading">Cherished Memories</h2>
                 <div className="decorative-line w-32 mb-6"></div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {memories.map((memory, index) => (
@@ -534,7 +529,7 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6 gradient-text">Our Journey</h2>
+                <h2 className="text-2xl font-semibold mb-6 section-heading">Our Journey</h2>
                 <div className="decorative-line w-32 mb-6"></div>
                 <div className="space-y-4">
                   {timelineItems.map((item, index) => (
@@ -561,7 +556,7 @@ export default function Home() {
                 viewport={{ once: true, margin: "-100px" }}
               >
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-6 gradient-text">Well Wishes</h2>
+                <h2 className="text-2xl font-semibold mb-6 section-heading">Well Wishes</h2>
                 <div className="decorative-line w-32 mb-6"></div>
 
                 {/* Well Wishes Form */}
@@ -614,7 +609,7 @@ export default function Home() {
                     <div className="relative">
                       <Button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white"
+                        className="w-full bg-pink-500 hover:bg-pink-600 text-white"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
