@@ -1,8 +1,8 @@
 export function Logo() {
   return (
-    <div className="flex items-center gap-2 md:hidden">
-      <div className="bg-pink-500 text-white p-2 rounded-md flex items-center justify-center font-bold text-xl">V</div>
-      <span className="font-semibold text-pink-500">Viết cho mùa hạ cuối</span>
+    <div className="flex items-center">
+      <img width={"64px"} src={"https://i.imgur.com/NLQDpp9.png"} />
+      <div className="text-[#444746] p-2 rounded-md flex items-center justify-center text-2xl">Email</div>
     </div>
   )
 }

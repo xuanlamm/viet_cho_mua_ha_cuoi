@@ -6,23 +6,21 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Lời Tri Ân Cho Thầy Cô Về Hưu",
-  description: "Lời tri ân chân thành dành cho thầy cô kính yêu của chúng tôi nhân dịp về hưu",
+  title: "Xuân Lâm - Viết cho mùa hạ cuối",
+  description: "Bức thư Viết cho mùa hạ cuối của Xuân Lâm",
   openGraph: {
-    title: "Lời Tri Ân Cho Thầy Cô Về Hưu",
-    description: "Lời tri ân chân thành dành cho thầy cô kính yêu của chúng tôi nhân dịp về hưu",
+    title: "Xuân Lâm - Viết cho mùa hạ cuối",
+    description: "Bức thư Viết cho mùa hạ cuối của Xuân Lâm",
     images: [
       {
-        // You can replace this with your actual image URL
         url: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format",
         width: 1200,
         height: 630,
-        alt: "Lời Tri Ân Cho Thầy Cô Về Hưu",
+        alt: "Xuân Lâm -Viết cho mùa hạ cuối",
       },
     ],
     type: "website",
   },
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({

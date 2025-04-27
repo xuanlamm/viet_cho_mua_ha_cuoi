@@ -54,27 +54,27 @@ export default function Home() {
 
   // Handle scroll to set active section
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["profile", "letter", "memories", "timeline", "wishes"]
-      const scrollPosition = window.scrollY + 100
-
-      for (const section of sections) {
-        const element = document.getElementById(section)
-        if (element) {
-          const offsetTop = element.offsetTop
-          const offsetHeight = element.offsetHeight
-
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section)
-            break
-          }
+    const sections = document.querySelectorAll("section[id]");
+    const observerOptions = {
+      root: null, // Use the viewport as the root
+      rootMargin: "0px",
+      threshold: 0.6, // Trigger when 60% of the section is visible
+    };
+  
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
         }
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      });
+    }, observerOptions);
+  
+    sections.forEach((section) => observer.observe(section));
+  
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, []);
 
   // Focus search input when search is opened
   useEffect(() => {
@@ -397,32 +397,30 @@ export default function Home() {
     <div className="flex flex-col items-center text-center mb-6">
       <div className="relative">
         <Avatar className="h-24 w-24 mb-4 ring-4 ring-pink-100 ring-offset-2">
-          <div className="bg-gradient-to-br from-pink-200 to-pink-300 h-full w-full flex items-center justify-center text-2xl font-semibold text-white">
-            T
-          </div>
+          <img src={"https://i.imgur.com/kBQrrlb.jpeg"} alt="Cô Loan" />
         </Avatar>
         <div className="absolute -bottom-2 -right-2 bg-pink-100 rounded-full p-1">
           <Heart className="h-4 w-4 text-pink-500" />
         </div>
       </div>
-      <h2 className="text-xl font-semibold mt-2">[Tên Thầy/Cô]</h2>
-      <p className="text-pink-500">Giáo viên [Môn học]</p>
-      <p className="text-gray-500 text-sm">[Tên Trường]</p>
+      <h2 className="text-xl font-semibold mt-2">Nguyễn Thị Thuý Loan</h2>
+      <p className="text-pink-500">Giáo viên</p>
+      <p className="text-gray-500 text-sm">THPT Quang Trung Đống Đa</p>
 
       <Separator className="my-4 bg-pink-100 w-full" />
 
       <div className="space-y-3 w-full text-left">
         <div>
           <h3 className="text-sm font-medium text-pink-500">Năm Công Tác</h3>
-          <p className="text-gray-900">1990 - 2024</p>
+          <p className="text-gray-900">1990 - nay</p>
         </div>
         <div>
           <h3 className="text-sm font-medium text-pink-500">Môn Học Giảng Dạy</h3>
-          <p className="text-gray-900">[Môn học 1], [Môn học 2]</p>
+          <p className="text-gray-900">Ngữ Văn<span className="text-pink-500">*</span>, Sử, GDĐP</p>
         </div>
         <div>
           <h3 className="text-sm font-medium text-pink-500">Học Vấn</h3>
-          <p className="text-gray-900">[Tên Trường Đại Học]</p>
+          <p className="text-gray-900">Đại học Sư phạm 2 Hà Nội</p>
         </div>
       </div>
 
@@ -433,15 +431,15 @@ export default function Home() {
         <ul className="space-y-2 text-sm">
           <li className="flex items-start">
             <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-            <span className="text-gray-700">[Thành tựu 1]</span>
+            <span className="text-gray-700">Chủ nhiệm 10 khoá học sinh</span>
           </li>
           <li className="flex items-start">
             <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-            <span className="text-gray-700">[Thành tựu 2]</span>
+            <span className="text-gray-700">Gieo bao ước mơ xanh cho nhiều thế hệ học trò</span>
           </li>
           <li className="flex items-start">
             <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-            <span className="text-gray-700">[Thành tựu 3]</span>
+            <span className="text-gray-700">Giúp HS viết tiếp ước mơ nghề giáo, làm bác sĩ, kĩ sư,...</span>
           </li>
         </ul>
       </div>
@@ -449,10 +447,10 @@ export default function Home() {
       <Separator className="my-4 bg-pink-100 w-full" />
 
       <div className="w-full text-left">
-        <h3 className="text-sm font-medium text-pink-500 mb-2">Câu Nói Yêu Thích</h3>
+        <h3 className="text-sm font-medium text-pink-500 mb-2">Lời cô nhắn nhủ</h3>
         <blockquote className="text-gray-700 italic text-sm bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
-          "Giáo dục không phải là đổ đầy một cái xô, mà là thắp sáng một ngọn lửa."
-          <footer className="text-pink-400 mt-1">— W.B. Yeats</footer>
+          "Cô chúc các con — lứa con út bé bỏng nhưng ra đời sẽ lớn mạnh, thành công, hạnh phúc!"
+          <footer className="text-pink-400 mt-1">— N.T Thuý Loan</footer>
         </blockquote>
       </div>
     </div>
@@ -466,13 +464,13 @@ export default function Home() {
       <DecorativeDots className="w-full h-full opacity-10" />
 
       {/* Sidebar Navigation - Desktop */}
-      <aside className="hidden md:flex w-64 flex-col border-r print:hidden bg-white relative z-10">
+      <aside className="hidden md:flex w-64 flex-col border-r print:hidden bg-white sticky top-0 h-screen overflow-hidden">
         <div className="p-4">
           <Logo />
-          <div className="decorative-line w-1/2 mt-2"></div>
+          <div className="decorative-line mt-1"></div>
         </div>
         <Separator />
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-hidden">
           {navigationItems.map((item) => (
             <Link
               key={item.id}
@@ -481,9 +479,20 @@ export default function Home() {
                 activeSection === item.id
                   ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
                   : "text-gray-700"
-              }`}
-              onClick={() => {
-                setActiveSection(item.id)
+              } ${item.id === "profile" ? "md:hidden" : ""}`} // Hide "Thông tin giáo viên" on desktop
+              onClick={(e) => {
+                e.preventDefault();
+                const target = document.getElementById(item.id);
+                if (target) {
+                  const navBarHeight = 64; // Adjust this value based on your navbar height
+                  const targetPosition = target.offsetTop - navBarHeight;
+
+                  window.scrollTo({
+                    top: targetPosition,
+                    behavior: "smooth",
+                  });
+                }
+                setActiveSection(item.id);
               }}
             >
               {item.icon}
@@ -496,8 +505,8 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="border-b print:hidden bg-white relative z-10">
-          <div className="flex items-center justify-between p-4">
+        <header className="border-b print:hidden bg-white relative z-10 overflow-hidden">
+          <div className="flex items-center justify-between p-6">
             <div className="flex items-center">
               {/* Mobile menu button */}
               <Sheet>
@@ -534,12 +543,12 @@ export default function Home() {
                   </nav>
                 </SheetContent>
               </Sheet>
-              <Logo />
+              <div className="text-xl mb-[-10px]">Thư chính</div>
             </div>
             <div className="flex items-center space-x-2">
               <SearchComponent />
               <a
-                href="https://github.com/yourusername/teacher-tribute/issues/new"
+                href="https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/issues/new"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -582,7 +591,7 @@ export default function Home() {
                     <h2 className="text-2xl font-semibold section-heading">
                       Viết cho mùa hạ cuối (cuối khoá 2022-2025)
                     </h2>
-                    <span className="text-sm text-pink-400 font-medium">Tháng 5/2024</span>
+                    <span className="text-sm text-pink-400 font-medium">25 Tháng 5, 2024</span>
                   </div>
 
                   {isLetterUnlocked ? (
