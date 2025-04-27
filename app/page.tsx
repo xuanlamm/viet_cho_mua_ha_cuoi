@@ -18,21 +18,13 @@ export default function Home() {
   // State for well wishes
   const [wishes, setWishes] = useState<WishType[]>([
     {
-      id: "1",
-      name: "Nguyễn Thị Hương",
-      nickname: "Hương Giang",
-      relationship: "Cựu Học Sinh",
-      message: "Thầy là giáo viên toán giỏi nhất mà em từng được học. Cảm ơn thầy đã luôn tin tưởng em!",
-      date: "10/05/2024",
-    },
-    {
-      id: "2",
-      name: "Trần Văn Minh",
-      nickname: "Minh Trần",
-      relationship: "Đồng Nghiệp",
-      message: "Thật vinh dự khi được làm việc cùng cô trong suốt 15 năm qua. Chúc cô nghỉ hưu vui vẻ!",
-      date: "12/05/2024",
-    },
+      id: "0",
+      name: "Nguyễn Văn A",
+      nickname: "nva",
+      relationship: "Học sinh",
+      message: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      date: "XX/YY/ZZZZ",
+    }
   ])
 
   const [newWish, setNewWish] = useState<Omit<WishType, "id" | "date">>({
@@ -542,7 +534,7 @@ export default function Home() {
                   </nav>
                 </SheetContent>
               </Sheet>
-              <Logo className="md:hidden" />
+              <Logo />
             </div>
             <div className="flex items-center space-x-2">
               <SearchComponent />
