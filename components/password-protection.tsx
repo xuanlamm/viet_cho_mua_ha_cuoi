@@ -31,7 +31,7 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
       if (password === CORRECT_PASSWORD) {
         onUnlock()
       } else {
-        setError("Password incorrect")
+        setError("Mật khẩu không chính xác")
       }
       setIsSubmitting(false)
     }, 500)
@@ -48,8 +48,8 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
         <div className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center mx-auto mb-4">
           <Lock className="h-8 w-8 text-pink-400" />
         </div>
-        <h3 className="text-xl font-medium mb-2 text-pink-500">This letter is protected</h3>
-        <p className="text-gray-600">Please enter the password to view this heartfelt message</p>
+        <h3 className="text-xl font-medium mb-2 text-pink-500">Bức thư này được bảo vệ</h3>
+        <p className="text-gray-600">Vui lòng nhập mật khẩu để xem</p>
       </motion.div>
 
       <motion.form
@@ -64,7 +64,7 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
+            placeholder="Nhập mật khẩu"
             className="w-full pr-10 border-pink-100 focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50"
             autoFocus
           />
@@ -76,7 +76,7 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
           className="w-full bg-pink-500 hover:bg-pink-600 text-white transition-all duration-300"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Checking..." : "Unlock Letter"}
+          {isSubmitting ? "Đang kiểm tra..." : "Mở khoá thư"}
         </Button>
 
         <AnimatePresence>

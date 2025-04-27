@@ -11,28 +11,32 @@ import { Separator } from "@/components/ui/separator"
 import { motion, AnimatePresence } from "framer-motion"
 import { PasswordProtection } from "@/components/password-protection"
 import { DecorativeCircle, DecorativeDots, FloatingHearts } from "@/components/decorative-elements"
+import { Logo } from "@/components/logo"
 
 export default function Home() {
   // State for well wishes
   const [wishes, setWishes] = useState<WishType[]>([
     {
       id: "1",
-      name: "Emma Thompson",
-      relationship: "Former Student",
-      message: "You were the best math teacher I ever had. Thank you for believing in me!",
-      date: "May 10, 2024",
+      name: "Nguyễn Thị Hương",
+      nickname: "Hương Giang",
+      relationship: "Cựu Học Sinh",
+      message: "Thầy là giáo viên toán giỏi nhất mà em từng được học. Cảm ơn thầy đã luôn tin tưởng em!",
+      date: "10/05/2024",
     },
     {
       id: "2",
-      name: "Michael Chen",
-      relationship: "Colleague",
-      message: "It's been an honor working alongside you these past 15 years. Enjoy your well-deserved retirement!",
-      date: "May 12, 2024",
+      name: "Trần Văn Minh",
+      nickname: "Minh Trần",
+      relationship: "Đồng Nghiệp",
+      message: "Thật vinh dự khi được làm việc cùng cô trong suốt 15 năm qua. Chúc cô nghỉ hưu vui vẻ!",
+      date: "12/05/2024",
     },
   ])
 
   const [newWish, setNewWish] = useState<Omit<WishType, "id" | "date">>({
     name: "",
+    nickname: "",
     relationship: "",
     message: "",
   })
@@ -119,7 +123,7 @@ export default function Home() {
             ...newWish,
             date:
               result.wish.date ||
-              new Date().toLocaleDateString("en-US", {
+              new Date().toLocaleDateString("vi-VN", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
@@ -134,14 +138,15 @@ export default function Home() {
         // Reset form
         setNewWish({
           name: "",
+          nickname: "",
           relationship: "",
           message: "",
         })
       } else {
-        console.error("Failed to submit wish")
+        console.error("Không thể gửi đóng góp")
       }
     } catch (error) {
-      console.error("Error submitting wish:", error)
+      console.error("Lỗi khi gửi đóng góp:", error)
     } finally {
       setIsSubmitting(false)
     }
@@ -244,7 +249,7 @@ export default function Home() {
           variant="ghost"
           size="icon"
           onClick={() => setIsSearchOpen(!isSearchOpen)}
-          title="Search"
+          title="Tìm kiếm"
           className="hover:bg-pink-50"
         >
           <Search className="h-5 w-5 text-gray-600" />
@@ -260,7 +265,7 @@ export default function Home() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 px-3 py-1 text-sm border border-pink-100 rounded-l-md focus:outline-none focus:ring-1 focus:ring-pink-300"
-                  placeholder="Search content..."
+                  placeholder="Tìm kiếm nội dung..."
                 />
                 <Button type="submit" className="rounded-l-none bg-pink-500 hover:bg-pink-600">
                   <Search className="h-4 w-4" />
@@ -270,7 +275,7 @@ export default function Home() {
               {searchResults.count > 0 && (
                 <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
                   <span>
-                    {searchResults.currentIndex + 1} of {searchResults.count} results
+                    {searchResults.currentIndex + 1} / {searchResults.count} kết quả
                   </span>
                   <div className="flex gap-1">
                     <Button
@@ -280,7 +285,7 @@ export default function Home() {
                       className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
                       onClick={() => navigateSearchResults("prev")}
                     >
-                      Previous
+                      Trước
                     </Button>
                     <Button
                       type="button"
@@ -289,7 +294,7 @@ export default function Home() {
                       className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
                       onClick={() => navigateSearchResults("next")}
                     >
-                      Next
+                      Sau
                     </Button>
                     <Button
                       type="button"
@@ -298,14 +303,14 @@ export default function Home() {
                       className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
                       onClick={closeSearch}
                     >
-                      Close
+                      Đóng
                     </Button>
                   </div>
                 </div>
               )}
 
               {searchResults.count === 0 && searchQuery.trim() !== "" && (
-                <div className="text-xs text-gray-500 mt-1">No results found for "{searchQuery}"</div>
+                <div className="text-xs text-gray-500 mt-1">Không tìm thấy kết quả cho "{searchQuery}"</div>
               )}
             </form>
           </div>
@@ -321,25 +326,25 @@ export default function Home() {
       setLoadError(null)
 
       try {
-        console.log("Fetching wishes from API...")
+        console.log("Đang tải đóng góp từ API...")
         const response = await fetch("/api/wishes")
 
         if (!response.ok) {
-          throw new Error(`API returned status: ${response.status}`)
+          throw new Error(`API trả về trạng thái: ${response.status}`)
         }
 
         const data = await response.json()
-        console.log("Wishes data received:", data)
+        console.log("Dữ liệu đóng góp đã nhận:", data)
 
         if (data.wishes && Array.isArray(data.wishes) && data.wishes.length > 0) {
           setWishes(data.wishes)
-          console.log(`Successfully loaded ${data.wishes.length} wishes`)
+          console.log(`Đã tải thành công ${data.wishes.length} đóng góp`)
         } else {
-          console.log("No wishes found or empty array returned")
+          console.log("Không tìm thấy đóng góp hoặc mảng trống được trả về")
         }
       } catch (error) {
-        console.error("Failed to fetch wishes:", error)
-        setLoadError(error instanceof Error ? error.message : "Unknown error")
+        console.error("Không thể tải đóng góp:", error)
+        setLoadError(error instanceof Error ? error.message : "Lỗi không xác định")
       } finally {
         setIsLoading(false)
       }
@@ -358,16 +363,16 @@ export default function Home() {
       {/* Sidebar Navigation */}
       <aside className="hidden md:flex w-64 flex-col border-r print:hidden bg-white relative z-10">
         <div className="p-4">
-          <h1 className="text-xl font-semibold text-pink-500">Retirement Letter</h1>
+          <Logo />
           <div className="decorative-line w-1/2 mt-2"></div>
         </div>
         <Separator />
         <nav className="flex-1 p-4 space-y-1">
           {[
-            { id: "letter", icon: <Pen className="mr-2 h-4 w-4" />, label: "Letter" },
-            { id: "memories", icon: <Camera className="mr-2 h-4 w-4" />, label: "Memories" },
-            { id: "timeline", icon: <Clock className="mr-2 h-4 w-4" />, label: "Timeline" },
-            { id: "wishes", icon: <Heart className="mr-2 h-4 w-4" />, label: "Wishes" },
+            { id: "letter", icon: <Pen className="mr-2 h-4 w-4" />, label: "Hộp thư đến" },
+            { id: "memories", icon: <Camera className="mr-2 h-4 w-4" />, label: "Kỷ niệm" },
+            { id: "timeline", icon: <Clock className="mr-2 h-4 w-4" />, label: "Dòng thời gian" },
+            { id: "wishes", icon: <Heart className="mr-2 h-4 w-4" />, label: "Đóng góp" },
           ].map((item) => (
             <Link
               key={item.id}
@@ -395,7 +400,7 @@ export default function Home() {
               <Button variant="ghost" size="icon" className="md:hidden mr-2 hover:bg-pink-50">
                 <Menu className="h-5 w-5 text-gray-600" />
               </Button>
-              <h1 className="text-xl font-semibold text-pink-500">Teacher Tribute</h1>
+              <h1 className="text-xl font-semibold text-pink-500">Thư chính</h1>
             </div>
             <div className="flex items-center space-x-2">
               <SearchComponent />
@@ -404,7 +409,7 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="ghost" size="icon" title="Report Bug" className="hover:bg-pink-50">
+                <Button variant="ghost" size="icon" title="Báo Lỗi" className="hover:bg-pink-50">
                   <Bug className="h-5 w-5 text-gray-600" />
                 </Button>
               </a>
@@ -427,41 +432,43 @@ export default function Home() {
               >
                 <div className="max-w-3xl mx-auto bg-white p-8 border border-pink-100 rounded-lg shadow-sm paper-texture">
                   <div className="mb-6 flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold section-heading">Retirement Letter</h2>
-                    <span className="text-sm text-pink-400 font-medium">May 2024</span>
+                    <h2 className="text-2xl font-semibold section-heading">
+                      Viết cho mùa hạ cuối (cuối khoá 2022-2025)
+                    </h2>
+                    <span className="text-sm text-pink-400 font-medium">Tháng 5/2024</span>
                   </div>
 
                   {isLetterUnlocked ? (
                     <div className="space-y-4">
-                      <p className="text-lg">Dear [Teacher's Name],</p>
+                      <p className="text-lg">Kính gửi [Tên Thầy/Cô],</p>
                       <p className="text-gray-700 leading-relaxed">
-                        As I prepare to graduate and embark on my university journey, I wanted to take a moment to
-                        express my deepest gratitude for the profound impact you've had on my education and personal
-                        growth.
+                        Khi chuẩn bị tốt nghiệp và bắt đầu hành trình đại học, em muốn dành một chút thời gian để bày tỏ
+                        lòng biết ơn sâu sắc về những ảnh hưởng to lớn mà thầy/cô đã tạo nên trong quá trình học tập và
+                        phát triển cá nhân của em.
                       </p>
                       <p className="text-gray-700 leading-relaxed">
-                        Your passion for teaching has ignited a love for learning within me that I will carry throughout
-                        my life. The knowledge, wisdom, and guidance you've shared have been invaluable, and I am truly
-                        grateful for the countless hours you've dedicated to helping me and my classmates succeed.
+                        Niềm đam mê giảng dạy của thầy/cô đã thắp lên trong em tình yêu học tập mà em sẽ mang theo suốt
+                        cuộc đời. Kiến thức, sự khôn ngoan và sự hướng dẫn mà thầy/cô đã chia sẻ thật vô giá, và em thực
+                        sự biết ơn vì những giờ phút thầy/cô đã dành để giúp đỡ em và các bạn học sinh khác thành công.
                       </p>
                       <p className="text-gray-700 leading-relaxed">
-                        I'll never forget how you [specific memory or lesson that was meaningful]. That moment, along
-                        with many others, has shaped my perspective and influenced my decision to pursue [field of
-                        study] at university.
+                        Em sẽ không bao giờ quên cách thầy/cô [kỷ niệm hoặc bài học có ý nghĩa]. Khoảnh khắc đó, cùng
+                        với nhiều khoảnh khắc khác, đã định hình quan điểm của em và ảnh hưởng đến quyết định theo đuổi
+                        [lĩnh vực học tập] tại đại học.
                       </p>
                       <p className="text-gray-700 leading-relaxed">
-                        As you retire, please know that your legacy lives on in the hearts and minds of all the students
-                        whose lives you've touched. Your dedication to education has created ripples that will continue
-                        to spread far beyond the classroom.
+                        Khi thầy/cô về hưu, xin hãy biết rằng di sản của thầy/cô vẫn sống mãi trong trái tim và tâm trí
+                        của tất cả những học sinh mà thầy/cô đã chạm đến. Sự cống hiến của thầy/cô cho giáo dục đã tạo
+                        ra những gợn sóng sẽ tiếp tục lan tỏa xa hơn ngoài lớp học.
                       </p>
                       <p className="text-gray-700 leading-relaxed">
-                        I wish you all the best in this new chapter of your life. May it be filled with joy, relaxation,
-                        and new adventures.
+                        Em chúc thầy/cô những điều tốt đẹp nhất trong chương mới của cuộc đời. Mong rằng nó sẽ tràn đầy
+                        niềm vui, sự thư giãn và những cuộc phiêu lưu mới.
                       </p>
                       <div className="pt-4">
-                        <p className="text-gray-700">With immense gratitude and respect,</p>
-                        <p className="font-semibold mt-2">[Your Name]</p>
-                        <p className="text-pink-400 text-sm">Class of 2024</p>
+                        <p className="text-gray-700">Với lòng biết ơn và kính trọng sâu sắc,</p>
+                        <p className="font-semibold mt-2">[Tên Của Bạn]</p>
+                        <p className="text-pink-400 text-sm">Khóa 2024</p>
                       </div>
                     </div>
                   ) : (
@@ -469,17 +476,17 @@ export default function Home() {
                       {/* Blurred content */}
                       <div className="absolute inset-0 overflow-hidden">
                         <div className="space-y-4 filter blur-md select-none pointer-events-none">
-                          <p className="text-lg">Dear [Teacher's Name],</p>
+                          <p className="text-lg">Kính gửi [Tên Thầy/Cô],</p>
                           <p className="text-gray-700 leading-relaxed">
-                            As I prepare to graduate and embark on my university journey, I wanted to take a moment to
-                            express my deepest gratitude for the profound impact you've had on my education and personal
-                            growth.
+                            Khi chuẩn bị tốt nghiệp và bắt đầu hành trình đại học, em muốn dành một chút thời gian để
+                            bày tỏ lòng biết ơn sâu sắc về những ảnh hưởng to lớn mà thầy/cô đã tạo nên trong quá trình
+                            học tập và phát triển cá nhân của em.
                           </p>
                           <p className="text-gray-700 leading-relaxed">
-                            Your passion for teaching has ignited a love for learning within me that I will carry
-                            throughout my life. The knowledge, wisdom, and guidance you've shared have been invaluable,
-                            and I am truly grateful for the countless hours you've dedicated to helping me and my
-                            classmates succeed.
+                            Niềm đam mê giảng dạy của thầy/cô đã thắp lên trong em tình yêu học tập mà em sẽ mang theo
+                            suốt cuộc đời. Kiến thức, sự khôn ngoan và sự hướng dẫn mà thầy/cô đã chia sẻ thật vô giá,
+                            và em thực sự biết ơn vì những giờ phút thầy/cô đã dành để giúp đỡ em và các bạn học sinh
+                            khác thành công.
                           </p>
                           {/* More blurred paragraphs */}
                         </div>
@@ -503,7 +510,7 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6 section-heading">Cherished Memories</h2>
+                <h2 className="text-2xl font-semibold mb-6 section-heading">Kỷ niệm 12D5</h2>
                 <div className="decorative-line w-32 mb-6"></div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {memories.map((memory, index) => (
@@ -529,7 +536,7 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
-                <h2 className="text-2xl font-semibold mb-6 section-heading">Our Journey</h2>
+                <h2 className="text-2xl font-semibold mb-6 section-heading">Hành trình năm học</h2>
                 <div className="decorative-line w-32 mb-6"></div>
                 <div className="space-y-4">
                   {timelineItems.map((item, index) => (
@@ -556,7 +563,7 @@ export default function Home() {
                 viewport={{ once: true, margin: "-100px" }}
               >
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-6 section-heading">Well Wishes</h2>
+                <h2 className="text-2xl font-semibold mb-6 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
                 <div className="decorative-line w-32 mb-6"></div>
 
                 {/* Well Wishes Form */}
@@ -564,7 +571,7 @@ export default function Home() {
                   <form className="space-y-4" onSubmit={handleWishSubmit}>
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Name
+                        Tên
                       </label>
                       <input
                         type="text"
@@ -573,13 +580,27 @@ export default function Home() {
                         value={newWish.name}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Your name"
+                        placeholder="Tên của bạn"
                         required
                       />
                     </div>
                     <div>
+                      <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1">
+                        Biệt danh
+                      </label>
+                      <input
+                        type="text"
+                        id="nickname"
+                        name="nickname"
+                        value={newWish.nickname}
+                        onChange={handleWishChange}
+                        className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
+                        placeholder="Biệt danh của bạn (nếu có)"
+                      />
+                    </div>
+                    <div>
                       <label htmlFor="relationship" className="block text-sm font-medium text-gray-700 mb-1">
-                        Relationship
+                        Mối quan hệ
                       </label>
                       <input
                         type="text"
@@ -588,12 +609,12 @@ export default function Home() {
                         value={newWish.relationship}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Student, Colleague, Parent, etc."
+                        placeholder="Học sinh, Giáo viên, Phụ huynh, v.v."
                       />
                     </div>
                     <div>
                       <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                        Your Message
+                        Lời nhắn của bạn
                       </label>
                       <textarea
                         id="message"
@@ -602,7 +623,7 @@ export default function Home() {
                         onChange={handleWishChange}
                         rows={4}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Share your well wishes, memories, or gratitude..."
+                        placeholder="Chia sẻ lời chúc, kỷ niệm hoặc lòng biết ơn của bạn..."
                         required
                       ></textarea>
                     </div>
@@ -613,11 +634,11 @@ export default function Home() {
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
-                          "Sending..."
+                          "Đang gửi..."
                         ) : (
                           <span className="flex items-center">
                             <Gift className="mr-2 h-4 w-4" />
-                            Send Your Wishes
+                            Đóng góp
                           </span>
                         )}
                       </Button>
@@ -631,7 +652,7 @@ export default function Home() {
                           >
                             <div className="flex items-center">
                               <Sparkles className="h-4 w-4 mr-2 text-green-500" />
-                              Your message has been added successfully!
+                              Lời nhắn của bạn đã được thêm thành công!
                             </div>
                           </motion.div>
                         )}
@@ -645,16 +666,16 @@ export default function Home() {
                   {isLoading ? (
                     <div className="text-center py-8">
                       <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-pink-200 border-r-pink-500"></div>
-                      <p className="mt-2 text-gray-600">Loading wishes...</p>
+                      <p className="mt-2 text-gray-600">Đang tải đóng góp...</p>
                     </div>
                   ) : loadError ? (
                     <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md">
-                      <p>Error loading wishes: {loadError}</p>
-                      <p className="text-sm mt-1">Please try refreshing the page.</p>
+                      <p>Lỗi khi tải đóng góp: {loadError}</p>
+                      <p className="text-sm mt-1">Vui lòng thử làm mới trang.</p>
                     </div>
                   ) : wishes.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <p>No wishes yet. Be the first to leave a message!</p>
+                      <p>Chưa có đóng góp nào. Hãy là người đầu tiên để lại lời nhắn!</p>
                     </div>
                   ) : (
                     wishes.map((wish, index) => (
@@ -668,6 +689,7 @@ export default function Home() {
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="font-medium">{wish.name}</h3>
+                            {wish.nickname && <p className="text-sm text-gray-500">{wish.nickname}</p>}
                             {wish.relationship && <p className="text-sm text-pink-400">{wish.relationship}</p>}
                           </div>
                           <span className="text-xs text-gray-500 bg-pink-50 px-2 py-1 rounded-full">{wish.date}</span>
@@ -693,44 +715,44 @@ export default function Home() {
                     <Heart className="h-4 w-4 text-pink-500" />
                   </div>
                 </div>
-                <h2 className="text-xl font-semibold mt-2">[Teacher's Name]</h2>
-                <p className="text-pink-500">[Subject] Teacher</p>
-                <p className="text-gray-500 text-sm">[School Name]</p>
+                <h2 className="text-xl font-semibold mt-2">[Tên Thầy/Cô]</h2>
+                <p className="text-pink-500">Giáo viên [Môn học]</p>
+                <p className="text-gray-500 text-sm">[Tên Trường]</p>
               </div>
 
               <Separator className="my-4 bg-pink-100" />
 
               <div className="space-y-3">
                 <div>
-                  <h3 className="text-sm font-medium text-pink-500">Years of Service</h3>
+                  <h3 className="text-sm font-medium text-pink-500">Năm Công Tác</h3>
                   <p className="text-gray-900">1990 - 2024</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-pink-500">Subjects Taught</h3>
-                  <p className="text-gray-900">[Subject 1], [Subject 2]</p>
+                  <h3 className="text-sm font-medium text-pink-500">Môn Học Giảng Dạy</h3>
+                  <p className="text-gray-900">[Môn học 1], [Môn học 2]</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-pink-500">Education</h3>
-                  <p className="text-gray-900">[University Name]</p>
+                  <h3 className="text-sm font-medium text-pink-500">Học Vấn</h3>
+                  <p className="text-gray-900">[Tên Trường Đại Học]</p>
                 </div>
               </div>
 
               <Separator className="my-4 bg-pink-100" />
 
               <div>
-                <h3 className="text-sm font-medium text-pink-500 mb-2">Notable Achievements</h3>
+                <h3 className="text-sm font-medium text-pink-500 mb-2">Thành Tựu Nổi Bật</h3>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start">
                     <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-                    <span className="text-gray-700">[Achievement 1]</span>
+                    <span className="text-gray-700">[Thành tựu 1]</span>
                   </li>
                   <li className="flex items-start">
                     <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-                    <span className="text-gray-700">[Achievement 2]</span>
+                    <span className="text-gray-700">[Thành tựu 2]</span>
                   </li>
                   <li className="flex items-start">
                     <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
-                    <span className="text-gray-700">[Achievement 3]</span>
+                    <span className="text-gray-700">[Thành tựu 3]</span>
                   </li>
                 </ul>
               </div>
@@ -738,9 +760,9 @@ export default function Home() {
               <Separator className="my-4 bg-pink-100" />
 
               <div>
-                <h3 className="text-sm font-medium text-pink-500 mb-2">Favorite Quote</h3>
+                <h3 className="text-sm font-medium text-pink-500 mb-2">Câu Nói Yêu Thích</h3>
                 <blockquote className="text-gray-700 italic text-sm bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
-                  "Education is not the filling of a pail, but the lighting of a fire."
+                  "Giáo dục không phải là đổ đầy một cái xô, mà là thắp sáng một ngọn lửa."
                   <footer className="text-pink-400 mt-1">— W.B. Yeats</footer>
                 </blockquote>
               </div>
@@ -781,7 +803,7 @@ function MemoryCard({
               onClick={() => setExpanded(true)}
               className="text-xs flex items-center text-pink-500 hover:text-pink-600 transition-colors"
             >
-              Read more <ChevronDown className="h-3 w-3 ml-1" />
+              Đọc thêm <ChevronDown className="h-3 w-3 ml-1" />
             </button>
           </>
         ) : (
@@ -792,7 +814,7 @@ function MemoryCard({
                 onClick={() => setExpanded(false)}
                 className="text-xs flex items-center text-pink-500 hover:text-pink-600 transition-colors"
               >
-                Show less <ChevronUp className="h-3 w-3 ml-1" />
+                Thu gọn <ChevronUp className="h-3 w-3 ml-1" />
               </button>
             )}
           </>
@@ -808,7 +830,7 @@ function MemoryCard({
                     <div key={index} className="relative aspect-[4/3] group overflow-hidden rounded-md">
                       <img
                         src={image || "/placeholder.svg"}
-                        alt={`Memory image for ${title}`}
+                        alt={`Hình ảnh kỷ niệm cho ${title}`}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -847,6 +869,7 @@ function TimelineItem({ year, title, description }: { year: string; title: strin
 type WishType = {
   id: string
   name: string
+  nickname?: string
   relationship: string
   message: string
   date: string
@@ -855,62 +878,63 @@ type WishType = {
 // Sample data
 const memories = [
   {
-    title: "Class Project",
-    date: "Fall 2021",
+    title: "Dự Án Lớp Học",
+    date: "Mùa Thu 2021",
     description:
-      "That time we worked on the science fair project and you stayed after hours to help us perfect our presentation. I remember how you encouraged us to think outside the box and approach the problem from different angles. Your patience and guidance helped us win first place, but more importantly, it taught me the value of perseverance and creative thinking.",
+      "Khoảng thời gian chúng ta làm việc trên dự án hội chợ khoa học và thầy/cô đã ở lại sau giờ học để giúp chúng em hoàn thiện bài thuyết trình. Em nhớ cách thầy/cô khuyến khích chúng em suy nghĩ đột phá và tiếp cận vấn đề từ nhiều góc độ khác nhau. Sự kiên nhẫn và hướng dẫn của thầy/cô đã giúp chúng em giành giải nhất, nhưng quan trọng hơn, nó dạy em giá trị của sự kiên trì và tư duy sáng tạo.",
     images: [
-      "/placeholder.svg?height=200&width=300&text=Science+Fair",
-      "/placeholder.svg?height=200&width=300&text=Project+Display",
+      "/placeholder.svg?height=200&width=300&text=Hội+Chợ+Khoa+Học",
+      "/placeholder.svg?height=200&width=300&text=Trưng+Bày+Dự+Án",
     ],
   },
   {
-    title: "Field Trip",
-    date: "Spring 2022",
+    title: "Chuyến Đi Thực Tế",
+    date: "Mùa Xuân 2022",
     description:
-      "The museum field trip where you showed us how our classroom lessons connect to the real world. You made history come alive by sharing stories and insights that weren't in our textbooks. I'll never forget how you explained the significance of each artifact and encouraged us to ask questions.",
-    images: ["/placeholder.svg?height=200&width=300&text=Museum+Visit"],
+      "Chuyến đi bảo tàng nơi thầy/cô đã chỉ cho chúng em cách các bài học trong lớp kết nối với thế giới thực. Thầy/cô đã làm cho lịch sử trở nên sống động bằng cách chia sẻ những câu chuyện và hiểu biết sâu sắc không có trong sách giáo khoa. Em sẽ không bao giờ quên cách thầy/cô giải thích ý nghĩa của từng hiện vật và khuyến khích chúng em đặt câu hỏi.",
+    images: ["/placeholder.svg?height=200&width=300&text=Tham+Quan+Bảo+Tàng"],
   },
   {
-    title: "Difficult Lesson",
-    date: "Winter 2022",
+    title: "Bài Học Khó",
+    date: "Mùa Đông 2022",
     description:
-      "When I struggled with that challenging concept and you found a creative way to help me understand it. You noticed I was falling behind and offered to stay after class. Instead of just repeating the same explanation, you used a completely different approach that finally made everything click. That moment changed my relationship with the subject forever.",
+      "Khi em gặp khó khăn với khái niệm thách thức đó và thầy/cô đã tìm ra cách sáng tạo để giúp em hiểu nó. Thầy/cô nhận thấy em đang bị tụt lại phía sau và đề nghị ở lại sau giờ học. Thay vì chỉ lặp lại cùng một lời giải thích, thầy/cô đã sử dụng một cách tiếp cận hoàn toàn khác cuối cùng đã giúp em hiểu được. Khoảnh khắc đó đã thay đổi mối quan hệ của em với môn học mãi mãi.",
     images: [],
   },
   {
-    title: "Book Recommendation",
-    date: "Fall 2023",
+    title: "Sách Được Giới Thiệu",
+    date: "Mùa Thu 2023",
     description:
-      "The book you recommended that opened my eyes to new perspectives and became one of my favorites. You somehow knew exactly what I needed to read at that point in my life. The themes in that book helped me navigate some personal challenges and inspired my college application essay.",
-    images: ["/placeholder.svg?height=200&width=300&text=Book+Cover"],
+      "Cuốn sách thầy/cô giới thiệu đã mở ra cho em những góc nhìn mới và trở thành một trong những cuốn sách yêu thích của em. Bằng cách nào đó thầy/cô đã biết chính xác những gì em cần đọc tại thời điểm đó trong cuộc đời. Những chủ đề trong cuốn sách đó đã giúp em vượt qua một số thách thức cá nhân và truyền cảm hứng cho bài luận xin vào đại học của em.",
+    images: ["/placeholder.svg?height=200&width=300&text=Bìa+Sách"],
   },
 ]
 
 const timelineItems = [
   {
     year: "2020",
-    title: "First Day",
-    description: "My first day in your class, feeling nervous but you made everyone feel welcome.",
+    title: "Ngày Đầu Tiên",
+    description:
+      "Ngày đầu tiên trong lớp của thầy/cô, cảm thấy lo lắng nhưng thầy/cô đã làm cho mọi người cảm thấy được chào đón.",
   },
   {
     year: "2021",
-    title: "Major Project",
-    description: "Working on that challenging year-long project that taught me perseverance.",
+    title: "Dự Án Lớn",
+    description: "Làm việc trên dự án kéo dài cả năm đầy thách thức đó đã dạy em sự kiên trì.",
   },
   {
     year: "2022",
-    title: "Academic Competition",
-    description: "When you coached our team for the regional competition and we placed second!",
+    title: "Cuộc Thi Học Thuật",
+    description: "Khi thầy/cô huấn luyện đội của chúng em cho cuộc thi khu vực và chúng em đã đạt giải nhì!",
   },
   {
     year: "2023",
-    title: "College Applications",
-    description: "Your guidance and letter of recommendation helped me get accepted to my dream university.",
+    title: "Đơn Xin Vào Đại Học",
+    description: "Sự hướng dẫn và thư giới thiệu của thầy/cô đã giúp em được nhận vào trường đại học mơ ước.",
   },
   {
     year: "2024",
-    title: "Graduation",
-    description: "Completing high school with the knowledge and confidence you helped instill in me.",
+    title: "Tốt Nghiệp",
+    description: "Hoàn thành trung học với kiến thức và sự tự tin mà thầy/cô đã giúp em xây dựng.",
   },
 ]
