@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Pen, Clock, Camera, Heart, Menu, Search, Bug, Gift, Sparkles, User } from "lucide-react"
+import { Pen, Clock, Camera, Heart, Menu, Bug, Gift, Sparkles, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
@@ -14,6 +14,7 @@ import { DecorativeCircle, DecorativeDots, FloatingHearts } from "@/components/d
 import { Logo } from "@/components/logo"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ImagePreview } from "@/components/image-preview"
+import { SearchComponent } from "@/components/search"
 
 export default function Home() {
   // State for well wishes
@@ -313,120 +314,6 @@ export default function Home() {
     setSearchQuery("")
   }
 
-  // Add the SearchComponent function inside the main component
-  function SearchComponent() {
-    return (
-      <div className="relative search-container">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            setIsSearchOpen(!isSearchOpen)
-            // Focus the input when opening the search
-            if (!isSearchOpen && searchInputRef.current) {
-              setTimeout(() => searchInputRef.current?.focus(), 100)
-            }
-          }}
-          title="Tìm kiếm"
-          className="hover:bg-pink-50"
-        >
-          <Search className="h-5 w-5 text-gray-600" />
-        </Button>
-
-        {isSearchOpen && (
-          <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-pink-100 rounded-md shadow-lg p-3 z-10">
-            <div className="flex flex-col gap-2">
-              <div className="flex">
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="flex-1 px-3 py-1 text-sm border border-pink-100 rounded-md focus:outline-none focus:ring-1 focus:ring-pink-300"
-                  placeholder="Tìm kiếm nội dung..."
-                  onBlur={(e) => {
-                    // Prevent losing focus when clicking inside the search container
-                    if (e.relatedTarget && e.relatedTarget.closest(".search-container")) {
-                      e.target.focus()
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  className="rounded-l-none bg-pink-500 hover:bg-pink-600"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    performSearch(searchQuery)
-                    // Refocus the input after clicking the search button
-                    if (searchInputRef.current) {
-                      searchInputRef.current.focus()
-                    }
-                  }}
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {searchResults.count > 0 && (
-                <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
-                  <span>
-                    {searchResults.currentIndex + 1} / {searchResults.count} kết quả
-                  </span>
-                  <div className="flex gap-1">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
-                      onClick={() => {
-                        navigateSearchResults("prev")
-                        // Refocus the input after navigation
-                        if (searchInputRef.current) {
-                          searchInputRef.current.focus()
-                        }
-                      }}
-                    >
-                      Trước
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
-                      onClick={() => {
-                        navigateSearchResults("next")
-                        // Refocus the input after navigation
-                        if (searchInputRef.current) {
-                          searchInputRef.current.focus()
-                        }
-                      }}
-                    >
-                      Sau
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
-                      onClick={closeSearch}
-                    >
-                      Đóng
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {searchResults.count === 0 && searchQuery.trim() !== "" && (
-                <div className="text-xs text-gray-500 mt-1">Không tìm thấy kết quả cho "{searchQuery}"</div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-
   // Fetch wishes from Vercel KV when the component mounts
   useEffect(() => {
     const fetchWishes = async () => {
@@ -636,7 +523,12 @@ export default function Home() {
               <img src={"/xuanlam_signature_black.png"} alt={"Xuân Lâm"} className="w-32 object-cover" />
             </div>
             <div className="flex items-center space-x-2">
-              <SearchComponent />
+              <SearchComponent
+                onSearch={performSearch}
+                onNavigate={navigateSearchResults}
+                onClose={closeSearch}
+                searchResults={searchResults}
+              />
               <a
                 href="https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/issues/new"
                 target="_blank"
