@@ -14,8 +14,6 @@ import { DecorativeCircle, DecorativeDots, FloatingHearts } from "@/components/d
 import { Logo } from "@/components/logo"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
-import { Noto_Serif } from "next/font/google";
-
 export default function Home() {
   // State for well wishes
   const [wishes, setWishes] = useState<WishType[]>([
@@ -36,13 +34,14 @@ export default function Home() {
     message: "",
   })
 
-  const [activeSection, setActiveSection] = useState<string>("letter")
+  const [activeSection, setActiveSection] = useState<string>("profile")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [isLetterUnlocked, setIsLetterUnlocked] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const mainContentRef = useRef<HTMLDivElement>(null)
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
@@ -54,37 +53,48 @@ export default function Home() {
   })
   const [highlightedElements, setHighlightedElements] = useState<Element[]>([])
 
-  // Handle scroll to set active section
+  // Reset scroll position on page load
   useEffect(() => {
-    setActiveSection("letter") // Set default active section to "letter"
-    const initializeObserver = () => {
-      const sections = document.querySelectorAll("section[id]");
-      const observerOptions = {
-        root: null, // Use the viewport as the root
-        rootMargin: "0px",
-        threshold: 0.6, // Trigger when 60% of the section is visible
-      };
-  
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      }, observerOptions);
-  
-      sections.forEach((section) => observer.observe(section));
-  
-      return () => {
-        sections.forEach((section) => observer.unobserve(section));
-      };
-    };
-  
-    // Initialize the observer on mount and when `isLetterUnlocked` changes
-    const cleanup = initializeObserver();
-  
-    return cleanup;
-  }, [isLetterUnlocked]); // Reinitialize when `isLetterUnlocked` changes
+    // Reset scroll position to top when component mounts
+    window.scrollTo(0, 0)
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0
+    }
+  }, [])
+
+  // Handle scroll to set active section using Intersection Observer
+  useEffect(() => {
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      // Find the section that has the largest intersection ratio
+      const visibleSections = entries.filter((entry) => entry.isIntersecting)
+
+      if (visibleSections.length > 0) {
+        // Sort by intersection ratio in descending order
+        const mostVisible = visibleSections.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+        setActiveSection(mostVisible.target.id)
+      }
+    }
+
+    const observerOptions = {
+      root: mainContentRef.current, // Use the main content as the viewport
+      rootMargin: "-100px 0px -100px 0px", // Adjust based on your header/footer height
+      threshold: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], // Multiple thresholds for better accuracy
+    }
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions)
+
+    // Observe all sections
+    const sections = document.querySelectorAll("section[id]")
+    sections.forEach((section) => {
+      observer.observe(section)
+    })
+
+    return () => {
+      sections.forEach((section) => {
+        observer.unobserve(section)
+      })
+    }
+  }, [isLetterUnlocked]) // Re-initialize when letter is unlocked
 
   // Focus search input when search is opened
   useEffect(() => {
@@ -183,8 +193,13 @@ export default function Home() {
     if (!query.trim()) return
 
     // Get only the content sections we want to search in
-    const contentSections = Array.from(document.querySelectorAll(".main_content"))
-      .filter((el): el is HTMLElement => el instanceof HTMLElement)
+    const contentSections = [
+      document.getElementById("profile"),
+      document.getElementById("letter"),
+      document.getElementById("memories"),
+      document.getElementById("timeline"),
+      document.getElementById("wishes"),
+    ].filter(Boolean) as HTMLElement[]
 
     const searchText = query.toLowerCase()
     const matchedElements: Element[] = []
@@ -223,8 +238,27 @@ export default function Home() {
     // Scroll to first result if found
     if (matchedElements.length > 0) {
       highlightCurrentResult(0)
-      matchedElements[0].scrollIntoView({ behavior: "smooth", block: "center" })
+      scrollToElement(matchedElements[0])
     }
+  }
+
+  // Scroll to an element within the main content area
+  const scrollToElement = (element: Element) => {
+    if (!mainContentRef.current) return
+
+    const container = mainContentRef.current
+    const headerHeight = 80 // Adjust based on your header height
+
+    // Calculate the position of the element relative to the container
+    const elementRect = element.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+    const relativeTop = elementRect.top - containerRect.top + container.scrollTop - headerHeight
+
+    // Scroll the container to the element
+    container.scrollTo({
+      top: relativeTop,
+      behavior: "smooth",
+    })
   }
 
   // Highlight the current result with a different color
@@ -256,7 +290,7 @@ export default function Home() {
 
     setSearchResults((prev) => ({ ...prev, currentIndex: newIndex }))
     highlightCurrentResult(newIndex)
-    highlightedElements[newIndex].scrollIntoView({ behavior: "smooth", block: "center" })
+    scrollToElement(highlightedElements[newIndex])
   }
 
   // Clear search highlights
@@ -435,6 +469,31 @@ export default function Home() {
     { id: "wishes", icon: <Heart className="mr-2 h-4 w-4" />, label: "Đóng góp" },
   ]
 
+  // Scroll to section function
+  const scrollToSection = (sectionId: string) => {
+    if (!mainContentRef.current) return
+
+    const section = document.getElementById(sectionId)
+    if (!section) return
+
+    const container = mainContentRef.current
+    const headerHeight = 80 // Adjust based on your header height
+
+    // Calculate the position of the section relative to the container
+    const sectionRect = section.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+    const relativeTop = sectionRect.top - containerRect.top + container.scrollTop - headerHeight
+
+    // Scroll the container to the section
+    container.scrollTo({
+      top: relativeTop,
+      behavior: "smooth",
+    })
+
+    // Update active section
+    setActiveSection(sectionId)
+  }
+
   // Teacher profile component
   const TeacherProfile = () => (
     <div className="flex flex-col items-center text-center mb-6">
@@ -501,10 +560,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-white print:block relative overflow-hidden">
-      {/* Decorative background elements */}
-      <DecorativeCircle className="w-96 h-96 -top-20 -left-20" />
-      <DecorativeCircle className="w-96 h-96 -bottom-20 -right-20" />
-      <DecorativeDots className="w-full h-full opacity-10" />
 
       {/* Sidebar Navigation - Desktop */}
       <aside className="hidden sticky top-0 md:flex w-64 flex-col border-r print:hidden bg-white z-10">
@@ -524,20 +579,8 @@ export default function Home() {
                 : "text-gray-900"
             } ${item.id === "profile" ? "md:hidden" : ""}`} // Hide profile information on desktop
             onClick={(e) => {
-              e.preventDefault();
-              const target = document.getElementById(item.id);
-              const mainContent = document.querySelector(".main_content"); // Select the scrollable container
-              if (target && mainContent) {
-                const headerHeight = document.querySelector("header")?.offsetHeight || 0; // Get the header height
-                const targetPosition = (target as HTMLElement).offsetTop - (mainContent as HTMLElement).offsetTop - headerHeight; // Adjust for header and container offset
-            
-                // Scroll the main_content container
-                mainContent.scrollTo({
-                  top: targetPosition,
-                  behavior: "smooth", // Smooth scrolling
-                });
-              }
-              setActiveSection(item.id); // Update the active section
+              e.preventDefault()
+              scrollToSection(item.id)
             }}
             >
               {item.icon}
@@ -551,7 +594,7 @@ export default function Home() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="sticky top-0 border-b print:hidden bg-white z-10">
-          <div className="flex items-center justify-between p-6">
+          <div className="flex items-center justify-between p-4">
             <div className="flex items-center">
               {/* Mobile menu button */}
               <Sheet>
@@ -576,9 +619,10 @@ export default function Home() {
                             ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
                             : "text-gray-900"
                         }`}
-                        onClick={() => {
-                          setActiveSection(item.id)
-                          document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" })
+                        onClick={(e) => {
+                          e.preventDefault()
+                          scrollToSection(item.id)
+                          setIsMobileMenuOpen(false)
                         }}
                       >
                         {item.icon}
@@ -606,10 +650,11 @@ export default function Home() {
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-x-hidden">
           <div className="flex flex-col lg:flex-row h-full">
             {/* Main Content */}
-            <div className="main_content flex-1 overflow-auto p-4 md:p-6">
+            {/* Decorative background elements */}
+            <div ref={mainContentRef} className="main_content flex-1 overflow-x-hidden p-4 md:p-6">
               {/* Teacher Profile Section - Mobile Only */}
               <motion.section
                 id="profile"
@@ -909,9 +954,12 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
                 viewport={{ once: true, margin: "-100px" }}
               >
+                <DecorativeCircle className="dec_cir w-96 h-96 -top-20 -left-20" />
+                <DecorativeCircle className="dec_cir w-96 h-96 -bottom-20 -right-20" />
+                <DecorativeDots className="w-full h-full opacity-50" />
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-6 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
-                <div className="decorative-line w-32 mb-6"></div>
+                <h2 className="text-2xl font-semibold mb-2 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
+                <div className="decorative-line w-[28rem] mb-6"></div>
 
                 {/* Well Wishes Form */}
                 <div className="max-w-2xl mx-auto bg-white p-6 border border-pink-100 rounded-lg shadow-sm mb-8">
@@ -1050,7 +1098,7 @@ export default function Home() {
             </div>
 
             {/* Teacher Profile Section - Desktop Only */}
-            <div className="hidden lg:block w-80 p-4 overflow-auto">
+            <div className="hidden lg:block w-80 p-4 overflow-x-hidden">
               <div className="sticky top-4">
                 <TeacherProfile />
               </div>
