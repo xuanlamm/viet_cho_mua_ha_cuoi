@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { Pen, Clock, Camera, Heart, Menu, Search, Bug, Gift, Sparkles, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import { PasswordProtection } from "@/components/password-protection"
 import { DecorativeCircle, DecorativeDots, FloatingHearts } from "@/components/decorative-elements"
 import { Logo } from "@/components/logo"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { ImagePreview } from "@/components/image-preview"
 
 export default function Home() {
   // State for well wishes
@@ -499,7 +500,7 @@ export default function Home() {
     <div className="flex flex-col items-center text-center mb-6">
       <div className="relative">
         <Avatar className="h-24 w-24 mb-4 ring-4 ring-pink-100 ring-offset-2">
-          <img src={"/kBQrrlb.jpeg"} alt="Cô Loan" />
+          <ImagePreview src={"/kBQrrlb.jpeg"} alt="Cô Loan" />
         </Avatar>
         <div className="absolute -bottom-2 -right-2 bg-pink-100 rounded-full p-1">
           <Heart className="h-4 w-4 text-pink-500" />
@@ -1127,22 +1128,27 @@ interface MemoryCardProps {
   images?: string[]
 }
 
-function MemoryCard({ title, date, description, images = [] }: MemoryCardProps) {
-  return (
-    <div className="memory-card overflow-hidden">
-      {images.length > 0 && (
-        <div className="aspect-video overflow-hidden">
-          <img src={images[0] || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
+  // Memory Card Component
+  function MemoryCard({ title, date, description, images = [] }: MemoryCardProps) {
+    return (
+      <div className="memory-card overflow-hidden border border-pink-100 rounded-lg shadow-sm">
+        {images.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
+            {images.map((image, index) => (
+              <div key={index} className="aspect-video overflow-hidden rounded-md">
+                <ImagePreview src={image || "/placeholder.svg"} alt={`${title} - ${index + 1}`} />
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="p-4">
+          <h3 className="font-medium text-lg mb-1">{title}</h3>
+          <p className="text-pink-500 text-sm mb-2">{date}</p>
+          <p className="text-gray-700">{description}</p>
         </div>
-      )}
-      <div className="p-4">
-        <h3 className="font-medium text-lg mb-1">{title}</h3>
-        <p className="text-pink-500 text-sm mb-2">{date}</p>
-        <p className="text-gray-900">{description}</p>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
 interface TimelineItemProps {
   date: string
@@ -1168,25 +1174,37 @@ const memories = [
     title: "Chuyến đi dã ngoại lớp 12D5",
     date: "Tháng 10, 2023",
     description: "Chuyến đi dã ngoại đầy ắp tiếng cười và kỷ niệm đẹp cùng thầy cô và các bạn lớp 12D5.",
-    images: ["/placeholder.svg?height=200&width=400&text=Dã+ngoại+lớp+12D5"],
+    images: [
+      "/placeholder.svg?height=200&width=400&text=Dã+ngoại+1",
+      "/placeholder.svg?height=200&width=400&text=Dã+ngoại+2",
+    ],
   },
   {
     title: "Lễ kỷ niệm 20/11",
     date: "Tháng 11, 2023",
     description: "Buổi lễ tri ân thầy cô nhân ngày Nhà giáo Việt Nam với nhiều tiết mục văn nghệ đặc sắc.",
-    images: ["/placeholder.svg?height=200&width=400&text=Lễ+20/11"],
+    images: [
+      "/placeholder.svg?height=200&width=400&text=Lễ+20/11+1",
+      "/placeholder.svg?height=200&width=400&text=Lễ+20/11+2",
+    ],
   },
   {
     title: "Hội thao trường THPT Quang Trung",
     date: "Tháng 12, 2023",
     description: "Những giây phút hào hứng và đầy tinh thần đồng đội trong hội thao của trường.",
-    images: ["/placeholder.svg?height=200&width=400&text=Hội+thao"],
+    images: [
+      "/placeholder.svg?height=200&width=400&text=Hội+thao+1",
+      "/placeholder.svg?height=200&width=400&text=Hội+thao+2",
+    ],
   },
   {
     title: "Tết trường 2024",
     date: "Tháng 1, 2024",
     description: "Không khí Tết tràn ngập sân trường với nhiều hoạt động văn hóa truyền thống.",
-    images: ["/placeholder.svg?height=200&width=400&text=Tết+trường"],
+    images: [
+      "/placeholder.svg?height=200&width=400&text=Tết+trường+1",
+      "/placeholder.svg?height=200&width=400&text=Tết+trường+2",
+    ],
   },
 ]
 

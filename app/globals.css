@@ -190,6 +190,17 @@ h6 {
   border-left: 2px solid rgb(var(--primary));
 }
 
+/* Image preview styles */
+.image-preview-trigger {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.image-preview-trigger:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 /* Improve mobile responsiveness */
 @media (max-width: 640px) {
   .section-heading {
