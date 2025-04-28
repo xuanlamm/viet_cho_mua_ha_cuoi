@@ -64,39 +64,36 @@ export default function Home() {
     }
   }, [])
 
-  // Handle scroll to set active section using Intersection Observer
+  // Handle scroll to set active section
   useEffect(() => {
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      // Find the section that has the largest intersection ratio
-      const visibleSections = entries.filter((entry) => entry.isIntersecting)
-
-      if (visibleSections.length > 0) {
-        // Sort by intersection ratio in descending order
-        const mostVisible = visibleSections.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        setActiveSection(mostVisible.target.id)
-      }
-    }
-
-    const observerOptions = {
-      root: mainContentRef.current, // Use the main content as the viewport
-      rootMargin: "-100px 0px -100px 0px", // Adjust based on your header/footer height
-      threshold: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], // Multiple thresholds for better accuracy
-    }
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions)
-
-    // Observe all sections
-    const sections = document.querySelectorAll("section[id]")
-    sections.forEach((section) => {
-      observer.observe(section)
-    })
-
-    return () => {
-      sections.forEach((section) => {
-        observer.unobserve(section)
-      })
-    }
-  }, [isLetterUnlocked]) // Re-initialize when letter is unlocked
+    const initializeObserver = () => {
+      const sections = document.querySelectorAll("section[id]");
+      const observerOptions = {
+        root: null, // Use the viewport as the root
+        rootMargin: "0px",
+        threshold: 0.6, // Trigger when 60% of the section is visible
+      };
+  
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      }, observerOptions);
+  
+      sections.forEach((section) => observer.observe(section));
+  
+      return () => {
+        sections.forEach((section) => observer.unobserve(section));
+      };
+    };
+  
+    // Initialize the observer on mount and when `isLetterUnlocked` changes
+    const cleanup = initializeObserver();
+  
+    return cleanup;
+  }, [isLetterUnlocked]); // Reinitialize when `isLetterUnlocked` changes
 
   // Focus search input when search is opened
   useEffect(() => {
@@ -395,21 +392,21 @@ export default function Home() {
       </div>
       <h2 className="text-xl font-semibold mt-2">Nguyễn Thị Thuý Loan</h2>
       <p className="text-pink-500">Giáo viên</p>
-      <p className="text-gray-500 text-sm">THPT Quang Trung Đống Đa</p>
+      <p className="text-gray-500 text-base">THPT Quang Trung Đống Đa</p>
 
       <Separator className="my-4 bg-pink-100 w-full" />
 
       <div className="space-y-3 w-full text-left">
         <div>
-          <h3 className="text-sm font-medium text-pink-500">Năm Công Tác</h3>
+          <h3 className="text-base font-medium text-pink-500">Năm công tác</h3>
           <p className="text-gray-900">1990 - nay</p>
         </div>
         <div>
-          <h3 className="text-sm font-medium text-pink-500">Môn Học Giảng Dạy</h3>
+          <h3 className="text-base font-medium text-pink-500">Môn học giảng dạy</h3>
           <p className="text-gray-900">Ngữ Văn<span className="text-pink-500">*</span>, Sử, GDĐP</p>
         </div>
         <div>
-          <h3 className="text-sm font-medium text-pink-500">Học Vấn</h3>
+          <h3 className="text-base font-medium text-pink-500">Học vấn</h3>
           <p className="text-gray-900">Đại học Sư phạm 2 Hà Nội</p>
         </div>
       </div>
@@ -417,8 +414,8 @@ export default function Home() {
       <Separator className="my-4 bg-pink-100 w-full" />
 
       <div className="w-full text-left">
-        <h3 className="text-sm font-medium text-pink-500 mb-2">Thành Tựu Nổi Bật</h3>
-        <ul className="space-y-2 text-sm">
+        <h3 className="text-base font-medium text-pink-500 mb-2">Thành tựu nổi bật</h3>
+        <ul className="space-y-2 text-base">
           <li className="flex items-start">
             <span className="h-1.5 w-1.5 rounded-full bg-pink-300 mt-1.5 mr-2"></span>
             <span className="text-gray-900">Chủ nhiệm 10 khoá học sinh</span>
@@ -437,10 +434,10 @@ export default function Home() {
       <Separator className="my-4 bg-pink-100 w-full" />
 
       <div className="w-full text-left">
-        <h3 className="text-sm font-medium text-pink-500 mb-2">Lời cô nhắn nhủ</h3>
-        <blockquote className="text-gray-900 italic text-sm bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
+        <h3 className="text-base font-medium text-pink-500 mb-2">Lời cô nhắn nhủ</h3>
+        <blockquote className="text-gray-900 italic text-base bg-white p-3 border-l-2 border-pink-300 rounded-r-md">
           "Cô chúc các con - lứa con út bé bỏng nhưng ra đời sẽ lớn mạnh, thành công, hạnh phúc!"
-          <footer className="text-pink-400 mt-1">— N.T Thuý Loan</footer>
+          <footer className="text-pink-500 mt-1">— N.T Thuý Loan</footer>
         </blockquote>
       </div>
     </div>
@@ -461,7 +458,7 @@ export default function Home() {
             <Link
             key={item.id}
             href={`#${item.id}`}
-            className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-pink-50 transition-colors ${
+            className={`flex items-center px-3 py-2 text-base rounded-md hover:bg-pink-50 transition-colors ${
               activeSection === item.id
                 ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
                 : "text-gray-900"
@@ -494,7 +491,7 @@ export default function Home() {
                 <SheetContent side="left" className="w-64 p-0 bg-white">
                   <div className="p-4">
                     <Logo />
-                    <div className="decorative-line w-1/2 mt-2"></div>
+                    <div className="decorative-line w-3/5 mt-2"></div>
                   </div>
                   <Separator />
                   <nav className="flex-1 p-4 space-y-1">
@@ -502,7 +499,7 @@ export default function Home() {
                       <Link
                         key={item.id}
                         href={`#${item.id}`}
-                        className={`flex items-center px-3 py-2 text-sm rounded-md hover:bg-pink-50 transition-colors ${
+                        className={`flex items-center px-3 py-2 text-base rounded-md hover:bg-pink-50 transition-colors ${
                           activeSection === item.id
                             ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
                             : "text-gray-900"
@@ -546,6 +543,9 @@ export default function Home() {
         <main className="flex-1 overflow-x-hidden">
           <div className="flex flex-col lg:flex-row h-full">
             {/* Main Content */}
+            <DecorativeCircle className="dec_cir w-96 h-96 -top-20 -left-20" />
+            <DecorativeCircle className="dec_cir w-96 h-96 -bottom-20 -right-20" />
+            <DecorativeDots className="w-full h-full opacity-50" />
             {/* Decorative background elements */}
             <div ref={mainContentRef} className="main_content flex-1 overflow-x-hidden p-4 md:p-6">
               {/* Teacher Profile Section - Mobile Only */}
@@ -569,7 +569,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="letter-container mb-6 flex justify-left items-center px-16 pb-5 mt-auto">
+                <div className="letter-container mb-6 flex justify-left items-center pb-5 mt-auto">
                   <h2 className="text-2xl font-semibold section-heading">
                     Viết cho mùa hạ cuối (cuối khoá 2022-2025)
                   </h2>
@@ -732,10 +732,10 @@ export default function Home() {
                       <div className="flex flex-col md:flex-row gap-6 mt-8 mb-4">
                         <div className="flex-1">
                           <div className="border-2 border-dashed border-pink-300 rounded-md p-4 flex flex-col items-center justify-center min-h-[200px]">
-                            <p className="text-pink-400 text-sm mb-2">[Ảnh cá nhân]</p>
+                            <p className="text-pink-400 text-base mb-1">[Ảnh cá nhân]</p>
                             <div className="w-32 h-40 bg-gray-100 flex items-center justify-center">
-                              <img
-                                src="/placeholder.svg?height=160&width=128&text=Ảnh+cá+nhân"
+                              <ImagePreview
+                                src="/YEU_1556[1].jpg"
                                 alt="Ảnh cá nhân"
                                 className="max-w-full max-h-full object-cover"
                               />
@@ -749,7 +749,7 @@ export default function Home() {
                               <img src={"/xuanlam_signature_black.png"} alt={"Xuân Lâm"} className="w-48 object-cover" />
                               <p className="text-gray-900 italic">Hoàng Xuân Lâm</p>
                             </div>
-                            <div className="mt-4 text-sm text-gray-900">
+                            <div className="mt-4 text-base text-gray-900">
                               <p>Địa chỉ liên lạc: Số 19, ngách 122/22 đường Láng, Thịnh Quang, Đống Đa, Hà Nội.</p>
                               <p>Số điện thoại: 0962913298</p>
                               <p>Email: hoangxuanlam2007@outlook.com</p>
@@ -849,16 +849,15 @@ export default function Home() {
               >
                 <DecorativeCircle className="dec_cir w-96 h-96 -top-20 -left-20" />
                 <DecorativeCircle className="dec_cir w-96 h-96 -bottom-20 -right-20" />
-                <DecorativeDots className="w-full h-full opacity-50" />
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-2 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
-                <div className="decorative-line w-[28rem] mb-6"></div>
+                <h2 className="text-2xl font-semibold mb-2 section-heading">Hãy trở thành 1 phần của bức thư này nhé!</h2>
+                <div className="decorative-line w-6/7 md:w-[30rem] mb-6"></div>
 
                 {/* Well Wishes Form */}
                 <div className="max-w-2xl mx-auto bg-white p-6 border border-pink-100 rounded-lg shadow-sm mb-8">
                   <form className="space-y-4" onSubmit={handleWishSubmit}>
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="name" className="block text-base font-medium text-gray-700 mb-1">
                         Tên
                       </label>
                       <input
@@ -868,12 +867,12 @@ export default function Home() {
                         value={newWish.name}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Tên của bạn"
+                        placeholder="Tên"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="nickname" className="block text-base font-medium text-gray-700 mb-1">
                         Biệt danh
                       </label>
                       <input
@@ -883,11 +882,11 @@ export default function Home() {
                         value={newWish.nickname}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Biệt danh của bạn (nếu có)"
+                        placeholder="Biệt danh (nếu có)"
                       />
                     </div>
                     <div>
-                      <label htmlFor="relationship" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="relationship" className="block text-base font-medium text-gray-700 mb-1">
                         Mối quan hệ
                       </label>
                       <input
@@ -897,12 +896,12 @@ export default function Home() {
                         value={newWish.relationship}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Học sinh, Giáo viên, Phụ huynh, v.v."
+                        placeholder="Bạn cùng bàn, giáo viên, v.v."
                       />
                     </div>
                     <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                        Lời nhắn của bạn
+                      <label htmlFor="message" className="block text-base font-medium text-gray-700 mb-1">
+                        Nội dung
                       </label>
                       <textarea
                         id="message"
@@ -936,7 +935,7 @@ export default function Home() {
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
-                            className="absolute top-full left-0 right-0 mt-2 p-2 bg-green-50 text-green-700 text-sm rounded-md border border-green-200"
+                            className="absolute top-full left-0 right-0 mt-2 p-2 bg-green-50 text-green-700 text-base rounded-md border border-green-200"
                           >
                             <div className="flex items-center">
                               <Sparkles className="h-4 w-4 mr-2 text-green-500" />
@@ -959,7 +958,7 @@ export default function Home() {
                   ) : loadError ? (
                     <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md">
                       <p>Lỗi khi tải đóng góp: {loadError}</p>
-                      <p className="text-sm mt-1">Vui lòng thử làm mới trang.</p>
+                      <p className="text-base mt-1">Vui lòng thử làm mới trang.</p>
                     </div>
                   ) : wishes.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
@@ -977,7 +976,7 @@ export default function Home() {
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="font-medium text-gray-900">{wish.name}</h3>
-                            {wish.nickname && <p className="text-sm text-pink-500">{wish.nickname}</p>}
+                            {wish.nickname && <p className="text-base text-pink-500">{wish.nickname}</p>}
                             {wish.relationship && <p className="text-xs text-gray-500">{wish.relationship}</p>}
                           </div>
                           <span className="text-xs text-gray-400">{wish.date}</span>
@@ -989,7 +988,6 @@ export default function Home() {
                 </div>
               </motion.section>
             </div>
-
             {/* Teacher Profile Section - Desktop Only */}
             <div className="hidden lg:block w-80 p-4 overflow-x-hidden">
               <div className="sticky top-4">
@@ -1035,7 +1033,7 @@ interface MemoryCardProps {
         )}
         <div className="p-4">
           <h3 className="font-medium text-lg mb-1">{title}</h3>
-          <p className="text-pink-500 text-sm mb-2">{date}</p>
+          <p className="text-pink-500 text-base mb-2">{date}</p>
           <p className="text-gray-700">{description}</p>
         </div>
       </div>
@@ -1052,7 +1050,7 @@ function TimelineItem({ date, title, description }: TimelineItemProps) {
   return (
     <div className="relative pl-6 pb-6 border-l border-pink-100 timeline-dot">
       <div className="mb-1">
-        <span className="text-sm font-medium text-pink-500">{date}</span>
+        <span className="text-base font-medium text-pink-500">{date}</span>
       </div>
       <h3 className="font-medium text-lg mb-1">{title}</h3>
       <p className="text-gray-900">{description}</p>
@@ -1105,31 +1103,31 @@ const timelineItems = [
   {
     date: "Tháng 8, 2022",
     title: "Bắt đầu năm học lớp 10",
-    description: "Những ngày đầu tiên làm quen với môi trường mới, thầy cô và bạn bè mới.",
+    description: "Những bước chân chập chững đầu tiên, được làm quen với môi trường mới, thầy cô, bạn bè mới.",
   },
   {
     date: "Tháng 5, 2023",
     title: "Kết thúc năm học lớp 10",
-    description: "Hoàn thành xuất sắc năm học đầu tiên tại trường THPT với nhiều thành tích đáng nhớ.",
+    description: "Đã dần thoải mái và thích nghi được với môi trường học tập, làm quen được với các bạn.",
   },
   {
     date: "Tháng 8, 2023",
     title: "Bắt đầu năm học lớp 11",
-    description: "Bước vào năm học mới với nhiều thử thách và cơ hội mới để phát triển bản thân.",
+    description: "Chơi thân với các bạn hơn, làm việc nhóm và có đóng góp trong nhiều dự án.",
   },
   {
     date: "Tháng 5, 2024",
     title: "Kết thúc năm học lớp 11",
-    description: "Một năm học đầy ắp kỷ niệm và tiến bộ trong học tập cũng như các hoạt động ngoại khóa.",
+    description: "Một năm học đầy ắp kỷ niệm, các hoạt động trải nghiệm thú vị.",
   },
   {
     date: "Tháng 8, 2024",
     title: "Bắt đầu năm học lớp 12",
-    description: "Năm học cuối cấp với nhiều dự định và mục tiêu quan trọng cho tương lai.",
+    description: "Năm học cuối cấp, chơi thân với nhiều bạn hơn, mở lòng và thoải mái hơn với bản thân rất nhiều.",
   },
   {
     date: "Tháng 5, 2025",
-    title: "Lễ tri ân và trưởng thành",
-    description: "Khoảnh khắc xúc động khi nói lời cảm ơn và tạm biệt thầy cô, mái trường thân yêu.",
+    title: "Lễ trưởng thành và tốt nghiệp",
+    description: "Những ngày tháng cuối cùng dưới mái trường THPT Quang Trung-Đống Đa, hy vọng về một tương lai tốt đẹp.",
   },
 ]

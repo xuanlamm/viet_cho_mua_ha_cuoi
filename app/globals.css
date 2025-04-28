@@ -26,7 +26,11 @@ body {
     "Helvetica Neue", sans-serif;
   background-color: rgb(var(--background));
   color: rgb(var(--foreground));
-  overflow-x: hidden;
+  overflow: hidden;
+}
+
+* {
+  transition: all 0.3 ease-in-out;
 }
 
 /* Decorative elements */
@@ -207,7 +211,32 @@ h6 {
   ime-mode: auto;
 }
 
-/* Improve mobile responsiveness */
+.main_content {
+  -webkit-overflow-scrolling: touch; /* Improve smooth scrolling on iOS */
+}
+
+/* Responsive */
+@media (max-width: 1220px) {
+  .letter-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  section {
+    scroll-margin-top: 80px;
+  }
+
+  section[id] {
+    min-height: 50vh;
+  }
+
+  .nav-item-active {
+    background-color: rgba(var(--primary-light), 0.5) !important;
+    border-left-width: 2px !important;
+  }
+}
+
 @media (max-width: 640px) {
   .section-heading {
     font-size: 1.5rem;

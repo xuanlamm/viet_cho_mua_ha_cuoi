@@ -5,8 +5,9 @@ import { X } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
 interface ImagePreviewProps {
-  src: string
-  alt: string
+  src: string;
+  alt: string;
+  className?: string; // Add className as an optional property
 }
 
 export function ImagePreview({ src, alt }: ImagePreviewProps) {
@@ -34,7 +35,7 @@ export function ImagePreview({ src, alt }: ImagePreviewProps) {
           <div className="relative">
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full z-10"
+              className="closeBtn absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full z-10"
               aria-label="Đóng"
             >
               <X className="h-5 w-5" />
