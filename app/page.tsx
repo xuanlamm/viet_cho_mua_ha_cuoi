@@ -183,13 +183,8 @@ export default function Home() {
     if (!query.trim()) return
 
     // Get only the content sections we want to search in
-    const contentSections = [
-      document.getElementById("profile"),
-      document.getElementById("letter"),
-      document.getElementById("memories"),
-      document.getElementById("timeline"),
-      document.getElementById("wishes"),
-    ].filter(Boolean) as HTMLElement[]
+    const contentSections = Array.from(document.querySelectorAll(".main_content"))
+      .filter((el): el is HTMLElement => el instanceof HTMLElement)
 
     const searchText = query.toLowerCase()
     const matchedElements: Element[] = []

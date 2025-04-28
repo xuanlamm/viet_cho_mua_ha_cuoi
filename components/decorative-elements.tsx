@@ -16,7 +16,7 @@ export function DecorativeDots({ className = "" }: { className?: string }) {
       style={{
         backgroundImage: "radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)",
         backgroundSize: "20px 20px",
-        opacity: 0.3,
+        opacity: 0.4,
       }}
     ></div>
   )
