@@ -595,8 +595,8 @@ export default function Home() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="sticky top-0 border-b print:hidden bg-white z-10">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center">
+          <div className="flex items-center justify-between p-4 bg-white">
+            <div className="flex items-center bg-white">
               {/* Mobile menu button */}
               <Sheet>
                 <SheetTrigger asChild>
@@ -604,7 +604,7 @@ export default function Home() {
                     <Menu className="h-5 w-5 text-gray-600" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-64 p-0">
+                <SheetContent side="left" className="w-64 p-0 bg-white">
                   <div className="p-4">
                     <Logo />
                     <div className="decorative-line w-1/2 mt-2"></div>
