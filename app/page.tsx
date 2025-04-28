@@ -563,7 +563,7 @@ export default function Home() {
 
       {/* Sidebar Navigation - Desktop */}
       <aside className="hidden sticky top-0 md:flex w-64 flex-col border-r print:hidden bg-white z-10">
-        <div className="p-4">
+        <div className="p-4 pt-6">
           <Logo />
           <div className="decorative-line mt-1"></div>
         </div>
