@@ -156,6 +156,246 @@ export default function Home() {
     }
   }
 
+  // Improved search functionality that searches as you type
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value
+    setSearchQuery(query)
+
+    if (query.trim().length > 0) {
+      performSearch(query)
+    } else {
+      clearHighlights()
+      setSearchResults({ count: 0, currentIndex: -1 })
+    }
+    // Ensure the input stays focused
+    if (searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus()
+      }, 0)
+    }
+  }
+
+  // Perform search with the given query
+  const performSearch = (query: string) => {
+    // Clear previous highlights
+    clearHighlights()
+
+    if (!query.trim()) return
+
+    // Get only the content sections we want to search in
+    const contentSections = [
+      document.getElementById("profile"),
+      document.getElementById("letter"),
+      document.getElementById("memories"),
+      document.getElementById("timeline"),
+      document.getElementById("wishes"),
+    ].filter(Boolean) as HTMLElement[]
+
+    const searchText = query.toLowerCase()
+    const matchedElements: Element[] = []
+
+    // Search only within the specified content sections
+    contentSections.forEach((section) => {
+      // Get all text elements within this section
+      const textElements = section.querySelectorAll("p, h2, h3, h4, h5, h6, span:not(.search-highlight)")
+
+      textElements.forEach((el) => {
+        // Skip elements that don't contain text or are part of the search UI
+        if (!el.textContent || el.closest(".search-container") || el.classList.contains("search-highlight")) {
+          return
+        }
+
+        const content = el.textContent.toLowerCase()
+        if (content.includes(searchText)) {
+          // Store original content for restoration later
+          el.setAttribute("data-original-content", el.innerHTML)
+
+          // Highlight matches
+          const regex = new RegExp(`(${searchText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
+          el.innerHTML = el.innerHTML.replace(regex, '<span class="search-highlight bg-yellow-200">$1</span>')
+
+          matchedElements.push(el)
+        }
+      })
+    })
+
+    setHighlightedElements(matchedElements)
+    setSearchResults({
+      count: matchedElements.length,
+      currentIndex: matchedElements.length > 0 ? 0 : -1,
+    })
+
+    // Scroll to first result if found
+    if (matchedElements.length > 0) {
+      highlightCurrentResult(0)
+      matchedElements[0].scrollIntoView({ behavior: "smooth", block: "center" })
+    }
+  }
+
+  // Highlight the current result with a different color
+  const highlightCurrentResult = (index: number) => {
+    // Reset all highlights to default color
+    document.querySelectorAll(".search-highlight").forEach((el) => {
+      el.classList.remove("bg-green-200")
+      el.classList.add("bg-yellow-200")
+    })
+
+    // Highlight the current result with a different color
+    if (highlightedElements[index]) {
+      const highlights = highlightedElements[index].querySelectorAll(".search-highlight")
+      highlights.forEach((el) => {
+        el.classList.remove("bg-yellow-200")
+        el.classList.add("bg-green-200")
+      })
+    }
+  }
+
+  // Navigate between search results
+  const navigateSearchResults = (direction: "next" | "prev") => {
+    if (highlightedElements.length === 0) return
+
+    const newIndex =
+      direction === "next"
+        ? (searchResults.currentIndex + 1) % highlightedElements.length
+        : (searchResults.currentIndex - 1 + highlightedElements.length) % highlightedElements.length
+
+    setSearchResults((prev) => ({ ...prev, currentIndex: newIndex }))
+    highlightCurrentResult(newIndex)
+    highlightedElements[newIndex].scrollIntoView({ behavior: "smooth", block: "center" })
+  }
+
+  // Clear search highlights
+  const clearHighlights = () => {
+    highlightedElements.forEach((el) => {
+      const originalContent = el.getAttribute("data-original-content")
+      if (originalContent) {
+        el.innerHTML = originalContent
+      }
+    })
+    setHighlightedElements([])
+    setSearchResults({ count: 0, currentIndex: -1 })
+  }
+
+  // Close search and clear highlights
+  const closeSearch = () => {
+    clearHighlights()
+    setIsSearchOpen(false)
+    setSearchQuery("")
+  }
+
+  // Add the SearchComponent function inside the main component
+  function SearchComponent() {
+    return (
+      <div className="relative search-container">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            setIsSearchOpen(!isSearchOpen)
+            // Focus the input when opening the search
+            if (!isSearchOpen && searchInputRef.current) {
+              setTimeout(() => searchInputRef.current?.focus(), 100)
+            }
+          }}
+          title="Tìm kiếm"
+          className="hover:bg-pink-50"
+        >
+          <Search className="h-5 w-5 text-gray-600" />
+        </Button>
+
+        {isSearchOpen && (
+          <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-pink-100 rounded-md shadow-lg p-3 z-10">
+            <div className="flex flex-col gap-2">
+              <div className="flex">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="flex-1 px-3 py-1 text-sm border border-pink-100 rounded-md focus:outline-none focus:ring-1 focus:ring-pink-300"
+                  placeholder="Tìm kiếm nội dung..."
+                  onBlur={(e) => {
+                    // Prevent losing focus when clicking inside the search container
+                    if (e.relatedTarget && e.relatedTarget.closest(".search-container")) {
+                      e.target.focus()
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  className="rounded-l-none bg-pink-500 hover:bg-pink-600"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    performSearch(searchQuery)
+                    // Refocus the input after clicking the search button
+                    if (searchInputRef.current) {
+                      searchInputRef.current.focus()
+                    }
+                  }}
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {searchResults.count > 0 && (
+                <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
+                  <span>
+                    {searchResults.currentIndex + 1} / {searchResults.count} kết quả
+                  </span>
+                  <div className="flex gap-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
+                      onClick={() => {
+                        navigateSearchResults("prev")
+                        // Refocus the input after navigation
+                        if (searchInputRef.current) {
+                          searchInputRef.current.focus()
+                        }
+                      }}
+                    >
+                      Trước
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
+                      onClick={() => {
+                        navigateSearchResults("next")
+                        // Refocus the input after navigation
+                        if (searchInputRef.current) {
+                          searchInputRef.current.focus()
+                        }
+                      }}
+                    >
+                      Sau
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-6 px-2 text-xs border-pink-100 hover:bg-pink-50"
+                      onClick={closeSearch}
+                    >
+                      Đóng
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {searchResults.count === 0 && searchQuery.trim() !== "" && (
+                <div className="text-xs text-gray-500 mt-1">Không tìm thấy kết quả cho "{searchQuery}"</div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
 
   // Fetch wishes from Vercel KV when the component mounts
   useEffect(() => {
@@ -356,6 +596,7 @@ export default function Home() {
               <img src={"/xuanlam_signature_black.png"} alt={"Xuân Lâm"} className="w-32 object-cover" />
             </div>
             <div className="flex items-center space-x-2">
+              <SearchComponent />
               <a
                 href="https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/issues/new"
                 target="_blank"
@@ -396,7 +637,7 @@ export default function Home() {
                 transition={{ duration: 0.5 }}
               >
                 <div className="letter-container mb-6 flex justify-left items-center px-16 pb-5 mt-auto">
-                  <h2 className="text-2xl font-medium section-heading">
+                  <h2 className="text-2xl font-semibold section-heading">
                     Viết cho mùa hạ cuối (cuối khoá 2022-2025)
                   </h2>
                   <div className="small-button ml-3 mt-auto mb-[0.35rem] inline text-xs bg-[#ddd] px-1 py-[0.1rem] text-[#666] rounded-[3px]"><span>Hộp thư đến</span></div>
@@ -674,14 +915,14 @@ export default function Home() {
                 viewport={{ once: true, margin: "-100px" }}
               >
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-2 section-heading">Trở thành 1 phần của bức thư ❤️</h2>
-                <div className="wishes-dec-line decorative-line w-[32rem] mb-6"></div>
+                <h2 className="text-2xl font-semibold mb-6 section-heading">Hãy trở thành 1 phần của bức thư này!</h2>
+                <div className="decorative-line w-32 mb-6"></div>
 
                 {/* Well Wishes Form */}
                 <div className="max-w-2xl mx-auto bg-white p-6 border border-pink-100 rounded-lg shadow-sm mb-8">
                   <form className="space-y-4" onSubmit={handleWishSubmit}>
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-1">
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                         Tên
                       </label>
                       <input
@@ -691,12 +932,12 @@ export default function Home() {
                         value={newWish.name}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Tên"
+                        placeholder="Tên của bạn"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="nickname" className="block text-sm font-medium text-gray-900 mb-1">
+                      <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1">
                         Biệt danh
                       </label>
                       <input
@@ -706,11 +947,11 @@ export default function Home() {
                         value={newWish.nickname}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Biệt danh (nếu có)"
+                        placeholder="Biệt danh của bạn (nếu có)"
                       />
                     </div>
                     <div>
-                      <label htmlFor="relationship" className="block text-sm font-medium text-gray-900 mb-1">
+                      <label htmlFor="relationship" className="block text-sm font-medium text-gray-700 mb-1">
                         Mối quan hệ
                       </label>
                       <input
@@ -720,11 +961,11 @@ export default function Home() {
                         value={newWish.relationship}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Bạn bè, giáo viên, bố, mẹ, v.v."
+                        placeholder="Học sinh, Giáo viên, Phụ huynh, v.v."
                       />
                     </div>
                     <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-1">
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
                         Lời nhắn của bạn
                       </label>
                       <textarea
@@ -734,7 +975,7 @@ export default function Home() {
                         onChange={handleWishChange}
                         rows={4}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Chia sẻ lời chúc, suy nghĩ..."
+                        placeholder="Chia sẻ lời chúc, kỷ niệm hoặc lòng biết ơn của bạn..."
                         required
                       ></textarea>
                     </div>
@@ -763,7 +1004,7 @@ export default function Home() {
                           >
                             <div className="flex items-center">
                               <Sparkles className="h-4 w-4 mr-2 text-green-500" />
-                              Lời nhắn đã được thêm thành công!
+                              Lời nhắn của bạn đã được thêm thành công!
                             </div>
                           </motion.div>
                         )}
@@ -805,7 +1046,7 @@ export default function Home() {
                           </div>
                           <span className="text-xs text-gray-400">{wish.date}</span>
                         </div>
-                        <p className="text-gray-900">{wish.message}</p>
+                        <p className="text-gray-700">{wish.message}</p>
                       </motion.div>
                     ))
                   )}

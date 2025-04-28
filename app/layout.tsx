@@ -1,9 +1,9 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Noto_Sans } from "next/font/google"
+import { Inter } from "next/font/google"
 import "./globals.css"
 
-const inter = Noto_Sans({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Xuân Lâm - Viết cho mùa hạ cuối",

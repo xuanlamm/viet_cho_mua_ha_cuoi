@@ -118,8 +118,8 @@ h6 {
 }
 
 .\[\&_svg\]\:size-4 svg {
-  width: 1.5rem !important;
-  height: 1.5rem !important;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
 }
 
 /* Subtle animations */
@@ -157,6 +157,32 @@ h6 {
   background: rgba(var(--primary), 0.5);
 }
 
+/* Prevent focus outline from being hidden */
+.search-container input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--primary), 0.3);
+  z-index: 10;
+}
+
+/* Make search container capture events */
+.search-container {
+  position: relative;
+  z-index: 50;
+}
+
+/* Ensure search dropdown stays above other elements */
+.search-container > div {
+  position: absolute;
+  z-index: 51;
+}
+
+/* Improve active state for navigation items */
+.nav-item-active {
+  background: linear-gradient(to right, rgba(var(--primary-light), 0.5), rgba(var(--primary-light), 0.2));
+  color: rgb(var(--primary));
+  font-weight: 500;
+  border-left: 2px solid rgb(var(--primary));
+}
 
 /* Improve mobile responsiveness */
 @media (max-width: 640px) {
