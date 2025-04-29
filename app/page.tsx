@@ -939,7 +939,7 @@ const memories = [
     description: "Chuyến đi tham quan đầu tiên của tập thể lớp 10D5 với cô Loan và được tham gia các trò chơi tại Quần thể du lịch giải trí Sun World Hạ Long.",
     images: [
       "/L-10.jpg",
-      "/L-10-2.jpg",
+      "/L-102.jpg",
     ],
   },
   {
@@ -948,7 +948,7 @@ const memories = [
     description: "Tham quan, dã ngoại tại Quần thể danh thắng Tràng An - biểu tượng lịch sử nổi tiếng của Ninh Bình.",
     images: [
       "/L11.jpg",
-      "/L11-2.jpg",
+      "/L112.jpg",
     ],
   },
   {
@@ -966,7 +966,7 @@ const memories = [
     description: "Những khoảnh khắc gắn kết ấy đã khắc sâu trong tim ta những kỷ niệm đáng nhớ chặng cuối năm học cấp Ba",
     images: [
       "/L12.jpeg",
-      "/L12-1.jpg",
+      "/L121.jpg",
     ],
   },
 ]
