@@ -33,6 +33,11 @@ body {
   transition: all 0.5 ease-in-out;
 }
 
+input {
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
 /* Decorative elements */
 .decorative-line {
   height: 3px;
