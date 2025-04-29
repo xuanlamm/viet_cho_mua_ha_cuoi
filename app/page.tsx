@@ -832,7 +832,7 @@ export default function Home() {
                     </div>
                   ) : wishes.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <p>Chưa có đóng góp nào. Hãy là người đầu tiên để lại lời nhắn!</p>
+                      <p>Chưa có đóng góp nào. Hãy là người đầu tiên để lại lời nhắn nhé!</p>
                     </div>
                   ) : (
                     wishes.map((wish, index) => (
