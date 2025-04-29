@@ -4,7 +4,8 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Pen, Clock, Camera, Heart, Menu, Bug, Gift, Sparkles, User } from "lucide-react"
+import { Inbox, Clock, Camera, Heart, Menu, Bug, Gift, Sparkles, User } from "lucide-react"
+import { FaCircle } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
@@ -67,7 +68,9 @@ export default function Home() {
   // Handle scroll to set active section
   useEffect(() => {
     const initializeObserver = () => {
-      const sections = document.querySelectorAll("section[id]");
+      const sections = Array.from(document.querySelectorAll("section[id]")).filter(
+        (section) => section.id !== "letter"
+      );
       const observerOptions = {
         root: null, // Use the viewport as the root
         rootMargin: "0px",
@@ -348,7 +351,7 @@ export default function Home() {
   // Navigation items
   const navigationItems = [
     { id: "profile", icon: <User className="mr-2 h-4 w-4" />, label: "Thông tin giáo viên" },
-    { id: "letter", icon: <Pen className="mr-2 h-4 w-4" />, label: "Hộp thư đến" },
+    { id: "letter", icon: <Inbox className="mr-2 h-4 w-4" />, label: "Hộp thư đến" },
     { id: "memories", icon: <Camera className="mr-2 h-4 w-4" />, label: "Kỷ niệm" },
     { id: "timeline", icon: <Clock className="mr-2 h-4 w-4" />, label: "Dòng thời gian" },
     { id: "wishes", icon: <Heart className="mr-2 h-4 w-4" />, label: "Đóng góp" },
@@ -459,17 +462,20 @@ export default function Home() {
             key={item.id}
             href={`#${item.id}`}
             className={`flex items-center px-3 py-2 text-base rounded-md hover:bg-pink-50 transition-colors ${
-              activeSection === item.id
+              activeSection === item.id && item.id !== "letter"
                 ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
                 : "text-gray-900"
             } ${item.id === "profile" ? "md:hidden" : ""}`} // Hide profile information on desktop
             onClick={(e) => {
-              e.preventDefault()
-              scrollToSection(item.id)
+              e.preventDefault();
+              scrollToSection(item.id);
             }}
             >
               {item.icon}
               {item.label}
+              {item.id === "letter" && !isLetterUnlocked && (
+                <FaCircle className="ml-2 text-[8px] text-pink-500" />
+              )}
             </Link>
           ))}
         </nav>
@@ -482,9 +488,17 @@ export default function Home() {
           <div className="flex items-center justify-between p-4 bg-white">
             <div className="flex items-center bg-white">
               {/* Mobile menu button */}
-              <Sheet>
+              <Sheet
+                open={isMobileMenuOpen} // Control the open state
+                onOpenChange={(open) => setIsMobileMenuOpen(open)} // Update state when the menu is opened/closed
+              >
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden mr-2 hover:bg-pink-50">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="md:hidden mr-2 hover:bg-pink-50"
+                    onClick={() => setIsMobileMenuOpen(true)} // Open the menu
+                  >
                     <Menu className="h-5 w-5 text-gray-600" />
                   </Button>
                 </SheetTrigger>
@@ -499,24 +513,24 @@ export default function Home() {
                       <Link
                         key={item.id}
                         href={`#${item.id}`}
-                        className={`flex items-center px-3 py-2 text-base rounded-md hover:bg-pink-50 transition-colors ${
-                          activeSection === item.id
-                            ? "bg-gradient-to-r from-pink-50 to-pink-100 text-pink-600 font-medium border-l-2 border-pink-400"
-                            : "text-gray-900"
-                        }`}
+                        className={`flex items-center px-3 py-2 text-base rounded-md hover:bg-pink-50 transition-colors`}
                         onClick={(e) => {
-                          e.preventDefault()
-                          scrollToSection(item.id)
-                          setIsMobileMenuOpen(false)
+                          e.preventDefault();
+                          scrollToSection(item.id); // Scroll to the section
+                          setIsMobileMenuOpen(false); // Close the mobile menu
                         }}
                       >
                         {item.icon}
                         {item.label}
+                        {item.id === "letter" && !isLetterUnlocked && (
+                          <FaCircle className="ml-2 text-[8px] text-pink-500" />
+                        )}
                       </Link>
                     ))}
                   </nav>
                 </SheetContent>
               </Sheet>
+
               <img src={"/xuanlam_signature_black.png"} alt={"Xuân Lâm"} className="w-32 object-cover" />
             </div>
             <div className="flex items-center space-x-2">
@@ -761,21 +775,21 @@ export default function Home() {
                   ) : (
                     <div className="relative">
                       {/* Blurred content */}
-                      <div className="space-y-4 letter paper-texture p-4 md:p-8 blurred-content">
-                      <span className="text-base text-gray-900 font-medium flex justify-end">Hà Nội, ngày 25 tháng 5 năm 2025</span>
-                      <p className="text-3xl flex justify-center m-20 mb-26">Viết cho mùa hạ cuối</p>
-                      <p className="text-lg">Kính gửi cô Nguyễn Thị Thuý Loan,</p>
-                      <p className="text-gray-900 leading-relaxed">
-                        Con là Hoàng Xuân Lâm, học sinh lớp 12D5 trường THPT Quang Trung-Đống Đa. Nhân dịp mùa hè cuối
-                        khoá 2022–2025, con xin được viết bức thư này để bày tỏ lòng biết ơn sâu sắc tới cô, các bạn
-                        và nhà trường đã luôn ở bên con trong suốt năm học vừa qua. Trước hết, con xin kính chúc cô thật
-                        nhiều sức khoẻ và luôn hạnh phúc trong cuộc sống và công việc. Mong rằng đó vẫn chưa phải là kết
-                        thúc, con mong rằng cô vẫn sẽ tiếp tục truyền nguồn cảm hứng của mình cho cho thật nhiều những
-                        thế hệ học sinh khác. Dạo này cô có khoẻ không ạ? Con luôn ấp ủ trong mình những thắc mắc. Cô
-                        nghĩ con là một học sinh như thế nào ạ? Với những đứa nghịch ngợm và ham chơi như tụi con không
-                        biết đã gây ảnh hưởng biết bao tới công việc của cô?
-                      </p>
-                    </div>
+                        <div className="space-y-4 letter paper-texture p-4 md:p-8 blurred-content">
+                        <span className="text-base text-gray-900 font-medium flex justify-end">Hà Nội, ngày 25 tháng 5 năm 2025</span>
+                        <p className="text-3xl flex justify-center m-20 mb-26">Viết cho mùa hạ cuối</p>
+                        <p className="text-lg">Kính gửi cô Nguyễn Thị Thuý Loan,</p>
+                        <p className="text-gray-900 leading-relaxed">
+                          Con là Hoàng Xuân Lâm, học sinh lớp 12D5 trường THPT Quang Trung-Đống Đa. Nhân dịp mùa hè cuối
+                          khoá 2022–2025, con xin được viết bức thư này để bày tỏ lòng biết ơn sâu sắc tới cô, các bạn
+                          và nhà trường đã luôn ở bên con trong suốt năm học vừa qua. Trước hết, con xin kính chúc cô thật
+                          nhiều sức khoẻ và luôn hạnh phúc trong cuộc sống và công việc. Mong rằng đó vẫn chưa phải là kết
+                          thúc, con mong rằng cô vẫn sẽ tiếp tục truyền nguồn cảm hứng của mình cho cho thật nhiều những
+                          thế hệ học sinh khác. Dạo này cô có khoẻ không ạ? Con luôn ấp ủ trong mình những thắc mắc. Cô
+                          nghĩ con là một học sinh như thế nào ạ? Với những đứa nghịch ngợm và ham chơi như tụi con không
+                          biết đã gây ảnh hưởng biết bao tới công việc của cô?
+                        </p>
+                        </div>
 
                       {/* Password protection overlay */}
                       <div className="absolute top-0 w-full h-full bg-white bg-opacity-90 backdrop-blur-sm py-10">
