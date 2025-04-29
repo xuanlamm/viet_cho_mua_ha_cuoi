@@ -934,39 +934,39 @@ function TimelineItem({ date, title, description }: TimelineItemProps) {
 // Sample data for memories
 const memories = [
   {
-    title: "Chuyến đi dã ngoại lớp 12D5",
-    date: "Tháng 10, 2023",
-    description: "Chuyến đi dã ngoại đầy ắp tiếng cười và kỷ niệm đẹp cùng thầy cô và các bạn lớp 12D5.",
+    title: "Tham quan Hạ Long - Đền thờ Chu Văn An",
+    date: "2 Tháng 11, 2022",
+    description: "Chuyến đi tham quan đầu tiên của tập thể lớp 10D5 với cô Loan và được tham gia các trò chơi tại Quần thể du lịch giải trí Sun World Hạ Long.",
     images: [
-      "/placeholder.svg?height=200&width=400&text=Dã+ngoại+1",
-      "/placeholder.svg?height=200&width=400&text=Dã+ngoại+2",
+      "/L-10.jpg",
+      "/L-10-2.jpg",
     ],
   },
   {
-    title: "Lễ kỷ niệm 20/11",
-    date: "Tháng 11, 2023",
-    description: "Buổi lễ tri ân thầy cô nhân ngày Nhà giáo Việt Nam với nhiều tiết mục văn nghệ đặc sắc.",
+    title: "Tham quan Tràng An - Ninh Bình",
+    date: "3 Tháng 12, 2023",
+    description: "Tham quan, dã ngoại tại Quần thể danh thắng Tràng An - biểu tượng lịch sử nổi tiếng của Ninh Bình.",
     images: [
-      "/placeholder.svg?height=200&width=400&text=Lễ+20/11+1",
-      "/placeholder.svg?height=200&width=400&text=Lễ+20/11+2",
+      "/L11.jpg",
+      "/L11-2.jpg",
     ],
   },
   {
-    title: "Hội thao trường THPT Quang Trung",
-    date: "Tháng 12, 2023",
-    description: "Những giây phút hào hứng và đầy tinh thần đồng đội trong hội thao của trường.",
+    title: "Kỷ yếu lớp 12D5",
+    date: "13 Tháng 10, 2024",
+    description: "Buổi chụp ảnh kỷ yếu đầy ý nghĩa, là những kỷ niệm thanh xuân ngọt ngào khắc sâu vào tâm hồn.",
     images: [
-      "/placeholder.svg?height=200&width=400&text=Hội+thao+1",
-      "/placeholder.svg?height=200&width=400&text=Hội+thao+2",
+      "/kiyeu1.jpg",
+      "/kiyeu2.jpg",
     ],
   },
   {
-    title: "Tết trường 2024",
-    date: "Tháng 1, 2024",
-    description: "Không khí Tết tràn ngập sân trường với nhiều hoạt động văn hóa truyền thống.",
+    title: "Tham quan FLC Sầm Sơn - Thanh Hoá",
+    date: "26 Tháng 10, 2024",
+    description: "Những khoảnh khắc gắn kết ấy đã khắc sâu trong tim ta những kỷ niệm đáng nhớ chặng cuối năm học cấp Ba",
     images: [
-      "/placeholder.svg?height=200&width=400&text=Tết+trường+1",
-      "/placeholder.svg?height=200&width=400&text=Tết+trường+2",
+      "/L12.jpeg",
+      "/L12-1.jpg",
     ],
   },
 ]

@@ -31,6 +31,23 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="/favicon.ico" sizes="180x180" />
+        <meta charSet="utf-8" />
+        <meta name="theme-color" content="#DB2777" />
+        <meta name="description" content="Bức thư Viết cho mùa hạ cuối của Xuân Lâm" />
+        <meta name="keywords" content="Viết cho mùa hạ cuối, Xuân Lâm" />
+        <meta name="author" content="Xuân Lâm" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Xuân Lâm - Viết cho mùa hạ cuối" />        
+        <meta property="og:description" content="Bức thư Viết cho mùa hạ cuối của Xuân Lâm" />
+        <meta property="og:image" content="" />        
+        <meta property="og:url" content="https://xuanlamvietchomuahacuoi.vercel.app/" />
+        <meta property="og:site_name" content="Xuân Lâm - Viết cho mùa hạ cuối" />        
+        <meta property="og:locale" content="vi_VN" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
