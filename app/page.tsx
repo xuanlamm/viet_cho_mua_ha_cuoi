@@ -962,7 +962,7 @@ const memories = [
     date: "26 Tháng 10, 2024",
     description: "Những khoảnh khắc gắn kết ấy đã khắc sâu trong tim ta những kỷ niệm đáng nhớ chặng cuối năm học cấp Ba",
     images: [
-      "/L12.jpeg",
+      "/L12.jpg",
       "https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/blob/main/public/L121.JPG?raw=true",
     ],
   },
