@@ -27,7 +27,7 @@ export function ImagePreview({ src, alt }: ImagePreviewProps) {
           }
         }}
       >
-        <img loading="lazy" src={src || "/placeholder.svg"} alt={alt} className="w-full h-full object-cover rounded-md" />
+        <img loading="lazy" src={src || "/placeholder.svg"} alt={alt} className="w-full h-full object-cover rounded-[10px]" />
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
