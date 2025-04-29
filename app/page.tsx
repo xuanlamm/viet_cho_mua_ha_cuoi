@@ -21,14 +21,7 @@ import LetterContent from "@/components/letterContent";
 export default function Home() {
   // State for well wishes
   const [wishes, setWishes] = useState<WishType[]>([
-    {
-      id: "0",
-      name: "Nguyễn Văn A",
-      nickname: "nva",
-      relationship: "Học sinh",
-      message: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      date: "XX/YY/ZZZZ",
-    }
+    //Blank
   ])
 
   const [newWish, setNewWish] = useState<Omit<WishType, "id" | "date">>({
@@ -322,6 +315,10 @@ export default function Home() {
       setLoadError(null)
 
       try {
+        console.log("Đây chỉ là 1 số method try và catch để debug thôi ^^")
+        console.log("Nếu bạn đang đọc được những dòng này thì chắc hẳn bạn cũng có tí kiến thức về Web nhỉ?")
+        console.log("Have fun! Vì mình có source code mà ^^")
+        console.log("")
         console.log("Đang tải đóng góp từ API...")
         const response = await fetch("/api/wishes")
 
@@ -947,8 +944,8 @@ const memories = [
     date: "3 Tháng 12, 2023",
     description: "Tham quan, dã ngoại tại Quần thể danh thắng Tràng An - biểu tượng lịch sử nổi tiếng của Ninh Bình.",
     images: [
-      "/L11.jpg",
-      "/L112.jpg",
+      "https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/blob/main/public/L11.JPG?raw=true",
+      "https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/blob/main/public/L112.JPG?raw=true",
     ],
   },
   {
@@ -966,7 +963,7 @@ const memories = [
     description: "Những khoảnh khắc gắn kết ấy đã khắc sâu trong tim ta những kỷ niệm đáng nhớ chặng cuối năm học cấp Ba",
     images: [
       "/L12.jpeg",
-      "/L121.jpg",
+      "https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/blob/main/public/L121.JPG?raw=true",
     ],
   },
 ]
