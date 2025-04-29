@@ -17,9 +17,7 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // IMPORTANT: Change this password to your desired value
-  // This is the password that will unlock the letter
-  const CORRECT_PASSWORD = "XuanLamD5!"
+  const CORRECT_PASSWORD = process.env.NEXT_PUBLIC_LETTER_PASSWORD
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

@@ -592,7 +592,12 @@ export default function Home() {
               
                 <div className="max-w-3xl mx-auto bg-white p-0 md:p-0 border border-pink-100 shadow-sm ">
                   {isLetterUnlocked ? (
-                    <div className="space-y-4 letter paper-texture p-4 md:p-8">
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }} // Fade in to opacity 1
+                      transition={{ duration: 1.5 }} // Adjust the duration of the fade-in
+                      className="space-y-4 letter paper-texture p-4 md:p-8"
+                    >
                       <span className="text-base text-gray-900 font-medium flex justify-end pt-6">Hà Nội, ngày 25 tháng 5 năm 2025</span>
                       <p className="text-3xl flex justify-center mt-26 mb-32 letter-title">Viết cho mùa hạ cuối</p>
                       <p className="text-lg">Kính gửi cô Nguyễn Thị Thuý Loan,</p>
@@ -771,7 +776,7 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ) : (
                     <div className="relative">
                       {/* Blurred content */}
