@@ -780,7 +780,7 @@ export default function Home() {
                         onChange={handleWishChange}
                         rows={4}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Chia sẻ lời chúc, kỷ niệm hoặc lòng biết ơn của bạn..."
+                        placeholder="Chia sẻ lời chúc, suy nghĩ của bạn..."
                         required
                       ></textarea>
                     </div>
@@ -944,8 +944,8 @@ const memories = [
     date: "3 Tháng 12, 2023",
     description: "Tham quan, dã ngoại tại Quần thể danh thắng Tràng An - biểu tượng lịch sử nổi tiếng của Ninh Bình.",
     images: [
-      "/12.JPG",
-      "/112.JPG",
+      "/12.jpg",
+      "/L11.jpg",
     ],
   },
   {
