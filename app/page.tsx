@@ -944,8 +944,8 @@ const memories = [
     date: "3 Tháng 12, 2023",
     description: "Tham quan, dã ngoại tại Quần thể danh thắng Tràng An - biểu tượng lịch sử nổi tiếng của Ninh Bình.",
     images: [
-      "https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/blob/main/public/L11.JPG?raw=true",
-      "https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/blob/main/public/L112.JPG?raw=true",
+      "/12.JPG",
+      "/112.JPG",
     ],
   },
   {
@@ -963,12 +963,11 @@ const memories = [
     description: "Những khoảnh khắc gắn kết ấy đã khắc sâu trong tim ta những kỷ niệm đáng nhớ chặng cuối năm học cấp Ba",
     images: [
       "/L12.jpg",
-      "https://github.com/xuanlamm/viet_cho_mua_ha_cuoi/blob/main/public/L121.JPG?raw=true",
+      "/121.jpg",
     ],
   },
 ]
 
-// Sample data for timeline
 const timelineItems = [
   {
     date: "Tháng 8, 2022",
