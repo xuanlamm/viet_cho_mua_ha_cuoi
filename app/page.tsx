@@ -945,7 +945,7 @@ const memories = [
     description: "Tham quan, dã ngoại tại Quần thể danh thắng Tràng An - biểu tượng lịch sử nổi tiếng của Ninh Bình.",
     images: [
       "/12.jpg",
-      "/L11.jpg",
+      "/11.jpg",
     ],
   },
   {
