@@ -42,6 +42,7 @@ export default function RootLayout({
         <meta name="keywords" content="Viết cho mùa hạ cuối, Xuân Lâm, viết, thư, mùa hạ, thanh xuân, cấp 3" />
         <meta name="author" content="Xuân Lâm" />
         <meta name="facebook-domain-verification" content="j9bo1ne9hm2fjr0oeffvn4x160wjsa" />
+        <meta property="fb:app_id" content="4015144605393292" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Xuân Lâm - Viết cho mùa hạ cuối" />   
         <meta property="og:description" content="Bức thư Viết cho mùa hạ cuối của Xuân Lâm" />
