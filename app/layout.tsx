@@ -46,9 +46,9 @@ export default function RootLayout({
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Xuân Lâm - Viết cho mùa hạ cuối" />   
         <meta property="og:description" content="Bức thư Viết cho mùa hạ cuối của Xuân Lâm" />
-        <meta property="og:image:url" content="/meta.png" />   
-        <meta property="og:image:secure" content="/meta.png" />
-        <meta property="og:image:secure_url" content="/meta.png" />
+        <meta property="og:image:url" content="https://i.imgur.com/1pZW78k.png" />   
+        <meta property="og:image:secure" content="https://i.imgur.com/1pZW78k.png" />
+        <meta property="og:image:secure_url" content="https://i.imgur.com/1pZW78k.png" />
         <meta property="og:image" content="https://i.imgur.com/1pZW78k.png" />   
         <meta property="og:url" content="https://xuanlamvietchomuahacuoi.vercel.app/" />
         <meta property="og:site_name" content="Xuân Lâm - Viết cho mùa hạ cuối" />        
