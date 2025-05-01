@@ -10,19 +10,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Xuân Lâm - Viết cho mùa hạ cuối",
   description: "Bức thư Viết cho mùa hạ cuối của Xuân Lâm",
-  openGraph: {
-    title: "Xuân Lâm - Viết cho mùa hạ cuối",
-    description: "Bức thư Viết cho mùa hạ cuối của Xuân Lâm",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format",
-        width: 1200,
-        height: 630,
-        alt: "Xuân Lâm - Viết cho mùa hạ cuối",
-      },
-    ],
-    type: "website",
-  },
 }
 
 export default function RootLayout({
