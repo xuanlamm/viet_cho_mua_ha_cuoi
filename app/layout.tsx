@@ -28,11 +28,14 @@ export default function RootLayout({
         <meta name="description" content="Bức thư Viết cho mùa hạ cuối của Xuân Lâm" />
         <meta name="keywords" content="Viết cho mùa hạ cuối, Xuân Lâm, viết, thư, mùa hạ, thanh xuân, cấp 3" />
         <meta name="author" content="Xuân Lâm" />
-
+        <meta name="facebook-domain-verification" content="j9bo1ne9hm2fjr0oeffvn4x160wjsa" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Xuân Lâm - Viết cho mùa hạ cuối" />        
+        <meta property="og:title" content="Xuân Lâm - Viết cho mùa hạ cuối" />   
         <meta property="og:description" content="Bức thư Viết cho mùa hạ cuối của Xuân Lâm" />
-        <meta property="og:image" content="/meta.png" />        
+        <meta property="og:image:url" content="/meta.png" />   
+        <meta property="og:image:secure" content="/meta.png" />
+        <meta property="og:image:secure_url" content="/meta.png" />
+        <meta property="og:image" content="/meta.png" />   
         <meta property="og:url" content="https://xuanlamvietchomuahacuoi.vercel.app/" />
         <meta property="og:site_name" content="Xuân Lâm - Viết cho mùa hạ cuối" />        
         <meta property="og:locale" content="vi_VN" />
