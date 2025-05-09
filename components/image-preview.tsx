@@ -23,11 +23,18 @@ export function ImagePreview({ src, alt }: ImagePreviewProps) {
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            setIsOpen(true)
+            setIsOpen(true);
           }
         }}
       >
-        <img loading="lazy" src={src || "/placeholder.svg"} alt={alt} className="w-full h-full object-cover rounded-[10px]" />
+        <img
+          loading="lazy"
+          src={src || "/placeholder.svg"}
+          alt={alt}
+          className={`w-full h-full object-cover ${
+            alt === "Ảnh cá nhân" ? "" : "rounded-[10px]"
+          }`}
+        />
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

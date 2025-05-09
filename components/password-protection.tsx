@@ -17,23 +17,39 @@ export function PasswordProtection({ onUnlock }: PasswordProtectionProps) {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const CORRECT_PASSWORD = process.env.NEXT_PUBLIC_LETTER_PASSWORD
+  const CORRECT_PASSWORD = process.env.LETTER_PASSWORD
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError(null)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
-    // Simulate a slight delay for better UX
-    setTimeout(() => {
-      if (password === CORRECT_PASSWORD) {
-        onUnlock()
+    try {
+      const response = await fetch("/api/verify-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          onUnlock();
+        } else {
+          setError("Mật khẩu không chính xác");
+        }
       } else {
-        setError("Mật khẩu không chính xác")
+        setError("Mật khẩu không chính xác");
       }
-      setIsSubmitting(false)
-    }, 500)
-  }
+    } catch (error) {
+      console.error("Error verifying password:", error);
+      setError("Đã xảy ra lỗi, vui lòng thử lại");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center">

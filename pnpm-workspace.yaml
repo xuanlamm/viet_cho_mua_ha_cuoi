@@ -1,0 +1,4 @@
+ignoredBuiltDependencies:
+  - '@firebase/util'
+  - '@vercel/speed-insights'
+  - protobufjs

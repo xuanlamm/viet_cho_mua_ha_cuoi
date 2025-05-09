@@ -162,25 +162,6 @@ export default function Home() {
     }
   }
 
-  // Improved search functionality that searches as you type
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value
-    setSearchQuery(query)
-
-    if (query.trim().length > 0) {
-      performSearch(query)
-    } else {
-      clearHighlights()
-      setSearchResults({ count: 0, currentIndex: -1 })
-    }
-    // Ensure the input stays focused
-    if (searchInputRef.current) {
-      setTimeout(() => {
-        searchInputRef.current?.focus()
-      }, 0)
-    }
-  }
-
   // Perform search with the given query
   const performSearch = (query: string) => {
     // Clear previous highlights
@@ -330,7 +311,11 @@ export default function Home() {
         console.log("Dữ liệu đóng góp đã nhận:", data)
 
         if (data.wishes && Array.isArray(data.wishes) && data.wishes.length > 0) {
-          setWishes(data.wishes)
+          const sortedWishes = data.wishes.sort((a: WishType, b: WishType) => {
+            return parseInt(a.id) - parseInt(b.id); // Newest first
+          });
+  
+          setWishes(sortedWishes);
           console.log(`Đã tải thành công ${data.wishes.length} đóng góp`)
         } else {
           console.log("Không tìm thấy đóng góp hoặc mảng trống được trả về")
@@ -607,7 +592,7 @@ export default function Home() {
                               <ImagePreview
                                 src="/YEU_1556[1].jpg"
                                 alt="Ảnh cá nhân"
-                                className="max-w-full max-h-full object-cover"
+                                className="max-w-full max-h-full object-cover personal-photo"
                               />
                             </div>
                           </div>
