@@ -19,7 +19,6 @@ import { SearchComponent } from "@/components/search"
 import LetterContent from "@/components/letterContent";
 
 export default function Home() {
-  // State for well wishes
   const [wishes, setWishes] = useState<WishType[]>([
     //Blank
   ])
@@ -40,7 +39,7 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const mainContentRef = useRef<HTMLDivElement>(null)
 
-  // Search functionality
+  // Search function
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -52,7 +51,6 @@ export default function Home() {
 
   // Reset scroll position on page load
   useEffect(() => {
-    // Reset scroll position to top when component mounts
     window.scrollTo(0, 0)
     if (mainContentRef.current) {
       mainContentRef.current.scrollTop = 0
@@ -66,9 +64,9 @@ export default function Home() {
         (section) => section.id !== "letter"
       );
       const observerOptions = {
-        root: null, // Use the viewport as the root
+        root: null,
         rootMargin: "0px",
-        threshold: 0.6, // Trigger when 60% of the section is visible
+        threshold: 0.1,
       };
   
       const observer = new IntersectionObserver((entries) => {
@@ -153,10 +151,10 @@ export default function Home() {
           message: "",
         })
       } else {
-        console.error("Không thể gửi đóng góp")
+        console.error("Không thể gửi lưu bút")
       }
     } catch (error) {
-      console.error("Lỗi khi gửi đóng góp:", error)
+      console.error("Lỗi khi gửi lưu bút:", error)
     } finally {
       setIsSubmitting(false)
     }
@@ -296,7 +294,7 @@ export default function Home() {
       setLoadError(null)
 
       try {
-        console.log("Đang tải đóng góp từ API...")
+        console.log("Đang tải lưu bút từ API...")
         const response = await fetch("/api/wishes")
 
         if (!response.ok) {
@@ -304,7 +302,7 @@ export default function Home() {
         }
 
         const data = await response.json()
-        console.log("Dữ liệu đóng góp đã nhận:", data)
+        console.log("Dữ liệu lưu bút đã nhận:", data)
 
         if (data.wishes && Array.isArray(data.wishes) && data.wishes.length > 0) {
           const sortedWishes = data.wishes.sort((a: WishType, b: WishType) => {
@@ -312,9 +310,9 @@ export default function Home() {
           });
   
           setWishes(sortedWishes);
-          console.log(`Đã tải thành công ${data.wishes.length} đóng góp`)
+          console.log(`Đã tải thành công ${data.wishes.length} lưu bút`)
         } else {
-          console.log("Không tìm thấy đóng góp hoặc mảng trống được trả về")
+          console.log("Không tìm thấy lưu bút hoặc mảng trống được trả về")
         }
 
         console.log("")
@@ -324,7 +322,7 @@ export default function Home() {
         console.log("")
 
       } catch (error) {
-        console.error("Không thể tải đóng góp:", error)
+        console.error("Không thể tải lưu bút:", error)
         setLoadError(error instanceof Error ? error.message : "Lỗi không xác định")
       } finally {
         setIsLoading(false)
@@ -340,7 +338,7 @@ export default function Home() {
     { id: "letter", icon: <Inbox className="mr-2 h-4 w-4" />, label: "Hộp thư đến" },
     { id: "memories", icon: <Camera className="mr-2 h-4 w-4" />, label: "Kỷ niệm" },
     { id: "timeline", icon: <Clock className="mr-2 h-4 w-4" />, label: "Dòng thời gian" },
-    { id: "wishes", icon: <Heart className="mr-2 h-4 w-4" />, label: "Đóng góp" },
+    { id: "wishes", icon: <Heart className="mr-2 h-4 w-4" />, label: "Lưu bút" },
   ]
 
   // Scroll to section function
@@ -768,7 +766,7 @@ export default function Home() {
                         onChange={handleWishChange}
                         rows={4}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Chia sẻ lời chúc, suy nghĩ của bạn..."
+                        placeholder="Chia sẻ những suy nghĩ của bạn về mình..."
                         required
                       ></textarea>
                     </div>
@@ -783,7 +781,7 @@ export default function Home() {
                         ) : (
                           <span className="flex items-center">
                             <Gift className="mr-2 h-4 w-4" />
-                            Đóng góp
+                            Lưu bút
                           </span>
                         )}
                       </Button>
@@ -811,16 +809,16 @@ export default function Home() {
                   {isLoading ? (
                     <div className="text-center py-8">
                       <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-pink-200 border-r-pink-500"></div>
-                      <p className="mt-2 text-gray-600">Đang tải đóng góp...</p>
+                      <p className="mt-2 text-gray-600">Đang tải lưu bút...</p>
                     </div>
                   ) : loadError ? (
                     <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md">
-                      <p>Lỗi khi tải đóng góp: {loadError}</p>
+                      <p>Lỗi khi tải lưu bút: {loadError}</p>
                       <p className="text-base mt-1">Vui lòng thử làm mới trang.</p>
                     </div>
                   ) : wishes.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <p>Chưa có đóng góp nào. Hãy là người đầu tiên để lại lời nhắn nhé!</p>
+                      <p>Chưa có lưu bút nào. Hãy là người đầu tiên để lại lời nhắn nhé!</p>
                     </div>
                   ) : (
                     wishes.map((wish, index) => (
@@ -970,7 +968,7 @@ const timelineItems = [
   {
     date: "Tháng 8, 2023",
     title: "Bắt đầu năm học lớp 11",
-    description: "Chơi thân với các bạn hơn, làm việc nhóm và có đóng góp trong nhiều dự án.",
+    description: "Chơi thân với các bạn hơn, làm việc nhóm và có lưu bút trong nhiều dự án.",
   },
   {
     date: "Tháng 5, 2024",
