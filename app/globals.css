@@ -137,6 +137,32 @@ h6 {
   height: 1.25rem !important;
 }
 
+.heart-icon {
+  background-image: url(https://sweetalert.js.org/assets/images/heart-icon.svg);
+  -webkit-filter: drop-shadow(0 0 5px #ff70709f);
+  filter: drop-shadow(0 0 5px #fa74749f);
+  height: 20px;
+  position: relative;
+  vertical-align: middle;
+  width: 22px;
+  transition: flickerAnimation 0.5s infinite;
+}
+
+footer {
+  background: #ff78b2;
+  background: linear-gradient(180deg, rgba(255, 120, 178, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  color: rgb(var(--foreground));
+  text-align: center;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(var(--border), 0.8);
+}
+
+footer a {
+  color: rgb(var(--primary));
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
 /* Subtle animations */
 @keyframes float {
   0% {

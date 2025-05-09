@@ -17,6 +17,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ImagePreview } from "@/components/image-preview"
 import { SearchComponent } from "@/components/search"
 import LetterContent from "@/components/letterContent";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   const [wishes, setWishes] = useState<WishType[]>([
@@ -318,7 +319,7 @@ export default function Home() {
         console.log("")
         console.log("Đây chỉ là 1 số method try và catch để debug thôi ^^")
         console.log("Nếu bạn đang đọc được những dòng này thì chắc hẳn bạn cũng có tí kiến thức về Web nhỉ?")
-        console.log("Have fun! Vì mình có source code mà ^^")
+        console.log("Have fun! Và mình có source code mà ^^")
         console.log("")
 
       } catch (error) {
@@ -843,6 +844,12 @@ export default function Home() {
                   )}
                 </div>
               </motion.section>
+              <div>
+              </div>
+
+              {/* Footer */}
+              <Footer />
+              
             </div>
             {/* Teacher Profile Section - Desktop Only */}
             <div className="hidden lg:block w-80 p-4 overflow-x-hidden">
