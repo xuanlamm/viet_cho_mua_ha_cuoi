@@ -296,10 +296,6 @@ export default function Home() {
       setLoadError(null)
 
       try {
-        console.log("Đây chỉ là 1 số method try và catch để debug thôi ^^")
-        console.log("Nếu bạn đang đọc được những dòng này thì chắc hẳn bạn cũng có tí kiến thức về Web nhỉ?")
-        console.log("Have fun! Vì mình có source code mà ^^")
-        console.log("")
         console.log("Đang tải đóng góp từ API...")
         const response = await fetch("/api/wishes")
 
@@ -320,6 +316,13 @@ export default function Home() {
         } else {
           console.log("Không tìm thấy đóng góp hoặc mảng trống được trả về")
         }
+
+        console.log("")
+        console.log("Đây chỉ là 1 số method try và catch để debug thôi ^^")
+        console.log("Nếu bạn đang đọc được những dòng này thì chắc hẳn bạn cũng có tí kiến thức về Web nhỉ?")
+        console.log("Have fun! Vì mình có source code mà ^^")
+        console.log("")
+
       } catch (error) {
         console.error("Không thể tải đóng góp:", error)
         setLoadError(error instanceof Error ? error.message : "Lỗi không xác định")
