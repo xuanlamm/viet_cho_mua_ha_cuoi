@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
@@ -61,7 +61,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={inter.className} suppressHydrationWarning={true}>
+      <body className={inter.className} suppressHydrationWarning>
         <SpeedInsights/>
         <Analytics/>
         {children}

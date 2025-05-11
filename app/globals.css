@@ -41,7 +41,6 @@ input {
   position: relative !important;
   z-index: 1000 !important;
   accent-color: rgb(244 114 182 / var(--tw-text-opacity, 1)) !important;
-  border: none !important;
 }
 
 /* Decorative elements */

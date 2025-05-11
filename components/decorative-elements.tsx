@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 
 export function DecorativeCircle({ className = "" }: { className?: string }) {
@@ -17,7 +18,7 @@ export function DecorativeDots({ className = "" }: { className?: string }) {
       className={`absolute ${className}`}
       style={{
         backgroundImage: "radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)",
-        backgroundSize: "2000px 2000px",
+        backgroundSize: "200px 200px",
         opacity: 0.4,
       }}
     ></div>
@@ -36,23 +37,38 @@ export function WavyLine({ className = "" }: { className?: string }) {
 }
 
 export function FloatingHearts() {
+  const [hearts, setHearts] = useState<
+    { top: string; left: string; fontSize: string; animation: string; delay: string }[]
+  >([]);
+
+  useEffect(() => {
+    const generatedHearts = [...Array(50)].map(() => ({
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      fontSize: `${Math.random() * 20 + 10}px`,
+      animation: `float ${Math.random() * 6 + 2}s ease-in-out infinite`,
+      delay: `${Math.random() * 3}s`,
+    }));
+    setHearts(generatedHearts);
+  }, []);
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(15)].map((_, i) => (
+      {hearts.map((heart, i) => (
         <div
           key={i}
           className="absolute text-pink-200 opacity-30"
           style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            fontSize: `${Math.random() * 20 + 10}px`,
-            animation: `float ${Math.random() * 6 + 4}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`,
+            top: heart.top,
+            left: heart.left,
+            fontSize: heart.fontSize,
+            animation: heart.animation,
+            animationDelay: heart.delay,
           }}
         >
           <FaHeart className="text-pink-200" />
         </div>
       ))}
     </div>
-  )
+  );
 }
