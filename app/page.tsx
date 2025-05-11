@@ -168,7 +168,6 @@ export default function Home() {
 
     // Get only the content sections to be searched
     const contentSections = [
-      document.getElementById("profile"),
       isLetterUnlocked ? document.getElementById("letter") : null, //Only perform search for #letter if the letter is unlocked :D
       document.getElementById("memories"),
       document.getElementById("timeline"),
