@@ -575,13 +575,12 @@ export default function Home() {
                   {isLetterUnlocked ? (
                     <motion.div 
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }} // Fade in to opacity 1
-                      transition={{ duration: 1.5 }} // Adjust the duration of the fade-in
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 1.5 }}
                       className="space-y-4 letter paper-texture p-4 md:p-8"
                     >
                       <LetterContent />
 
-                      {/* Add student photo and signature section */}
                       <div className="flex flex-col md:flex-row gap-6 mt-8 mb-4">
                         <div className="flex-1">
                           <div className="border-2 border-dashed border-pink-300 rounded-md p-4 flex flex-col items-center justify-center min-h-[200px]">
