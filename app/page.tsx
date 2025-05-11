@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Inbox, Clock, Camera, FolderHeart, Menu, Bug, PencilLine, Sparkles, User } from "lucide-react"
+import { Inbox, Clock, Heart, Camera, FolderHeart, Menu, Bug, PencilLine, Sparkles, User } from "lucide-react"
 import { FaCircle } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
@@ -371,7 +371,7 @@ export default function Home() {
           <ImagePreview src={"/kBQrrlb.jpeg"} alt="Cô Loan" />
         </Avatar>
         <div className="absolute -bottom-2 -right-2 bg-pink-100 rounded-full p-1">
-          <FolderHeart className="h-4 w-4 text-pink-500" />
+          <Heart className="h-4 w-4 text-pink-500" />
         </div>
       </div>
       <h2 className="text-xl font-semibold mt-2">Nguyễn Thị Thuý Loan</h2>
