@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Inbox, Clock, Heart, Camera, FolderHeart, Menu, Bug, PencilLine, Sparkles, User } from "lucide-react"
+import { Inbox, Clock, Heart, Camera, FolderHeart, Menu, Bug, PencilLine, Sparkles, User, Hash } from "lucide-react"
 import { FaCircle } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
@@ -169,7 +169,7 @@ export default function Home() {
     // Get only the content sections to be searched
     const contentSections = [
       document.getElementById("profile"),
-      document.getElementById("letter"),
+      isLetterUnlocked ? document.getElementById("letter") : null, //Only perform search for #letter if the letter is unlocked :D
       document.getElementById("memories"),
       document.getElementById("timeline"),
       document.getElementById("wishes"),
@@ -703,7 +703,7 @@ export default function Home() {
                 <DecorativeCircle className="dec_cir w-96 h-96 -top-20 -left-20" />
                 <DecorativeCircle className="dec_cir w-96 h-96 -bottom-20 -right-20" />
                 <FloatingHearts />
-                <h2 className="text-2xl font-semibold mb-2 section-heading">Hãy trở thành 1 phần của bức thư này nhé!</h2>
+                <h2 className="text-2xl font-semibold mb-2 section-heading">Lưu bút và trở thành 1 phần ký ức của tớ ❤️</h2>
                 <div className="decorative-line w-6/7 md:w-[30rem] mb-6"></div>
 
                 {/* Well Wishes Form */}
@@ -765,7 +765,7 @@ export default function Home() {
                         onChange={handleWishChange}
                         rows={4}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Chia sẻ những suy nghĩ của bạn về mình..."
+                        placeholder="Nội dung lưu bút nè..."
                         required
                       ></textarea>
                     </div>
@@ -817,7 +817,7 @@ export default function Home() {
                     </div>
                   ) : wishes.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <p>Chưa có lưu bút nào. Hãy là người đầu tiên để lại lời nhắn nhé!</p>
+                      <p>Chưa có lưu bút nào. Hãy là người đầu tiên để lại lưu bút nhé!</p>
                     </div>
                   ) : (
                     wishes.map((wish, index) => (
@@ -830,11 +830,13 @@ export default function Home() {
                       >
                         <div className="flex justify-between items-start mb-2">
                           <div>
-                            <h3 className="font-medium text-gray-900">{wish.name}</h3>
-                            {wish.nickname && <p className="text-base text-pink-500">{wish.nickname}</p>}
-                            {wish.relationship && <p className="text-xs text-gray-500">{wish.relationship}</p>}
+                            <h3 className="font-medium text-gray-900">
+                              {wish.name} 
+                            </h3>
+                            {wish.nickname && <p className="text-base text-pink-500"><span className="quotation pr-0.5">❝</span>{wish.nickname}<span className="quotation pl-0.5">❞</span></p>}
+                            {wish.relationship && <p className="text-sm text-gray-500">{wish.relationship}</p>}
                           </div>
-                          <span className="text-xs text-gray-400">{wish.date}</span>
+                          <span className="text-xs/[24px] text-gray-400 top-0.5 relative">{wish.date}</span>
                         </div>
                         <p className="text-gray-700">{wish.message}</p>
                       </motion.div>

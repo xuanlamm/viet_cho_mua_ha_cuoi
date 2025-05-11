@@ -145,6 +145,10 @@ p {
   height: 1.25rem !important;
 }
 
+.quotation {
+  color: rgb(249 168 212 / var(--tw-text-opacity, 1)) /* #f9a8d4 */;
+}
+
 .heart-icon {
   background-image: url(https://sweetalert.js.org/assets/images/heart-icon.svg);
   -webkit-filter: drop-shadow(0 0 5px #ff70709f);
