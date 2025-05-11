@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Inbox, Clock, Camera, Heart, Menu, Bug, Gift, Sparkles, User } from "lucide-react"
+import { Inbox, Clock, Camera, FolderHeart, Menu, Bug, PencilLine, Sparkles, User } from "lucide-react"
 import { FaCircle } from "react-icons/fa"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
@@ -21,7 +21,7 @@ import { Footer } from "@/components/footer";
 
 export default function Home() {
   const [wishes, setWishes] = useState<WishType[]>([
-    //Blank
+    //Example data for testing
   ])
 
   const [newWish, setNewWish] = useState<Omit<WishType, "id" | "date">>({
@@ -50,7 +50,7 @@ export default function Home() {
   })
   const [highlightedElements, setHighlightedElements] = useState<Element[]>([])
 
-  // Reset scroll position on page load
+  // Reset window position on page load
   useEffect(() => {
     window.scrollTo(0, 0)
     if (mainContentRef.current) {
@@ -84,12 +84,10 @@ export default function Home() {
         sections.forEach((section) => observer.unobserve(section));
       };
     };
-  
-    // Initialize the observer on mount and when `isLetterUnlocked` changes
     const cleanup = initializeObserver();
   
     return cleanup;
-  }, [isLetterUnlocked]); // Reinitialize when `isLetterUnlocked` changes
+  }, [isLetterUnlocked]);
 
   // Focus search input when search is opened
   useEffect(() => {
@@ -168,7 +166,7 @@ export default function Home() {
 
     if (!query.trim()) return
 
-    // Get only the content sections we want to search in
+    // Get only the content sections to be searched
     const contentSections = [
       document.getElementById("profile"),
       document.getElementById("letter"),
@@ -182,18 +180,17 @@ export default function Home() {
 
     // Search only within the specified content sections
     contentSections.forEach((section) => {
-      // Get all text elements within this section
       const textElements = section.querySelectorAll("p, h2, h3, h4, h5, h6, span:not(.search-highlight)")
 
       textElements.forEach((el) => {
-        // Skip elements that don't contain text or are part of the search UI
+        // Skip elements
         if (!el.textContent || el.closest(".search-container") || el.classList.contains("search-highlight")) {
           return
         }
 
         const content = el.textContent.toLowerCase()
         if (content.includes(searchText)) {
-          // Store original content for restoration later
+          // Store original content
           el.setAttribute("data-original-content", el.innerHTML)
 
           // Highlight matches
@@ -223,7 +220,7 @@ export default function Home() {
     if (!mainContentRef.current) return
 
     const container = mainContentRef.current
-    const headerHeight = 80 // Adjust based on your header height
+    const headerHeight = 75
 
     // Calculate the position of the element relative to the container
     const elementRect = element.getBoundingClientRect()
@@ -288,7 +285,7 @@ export default function Home() {
     setSearchQuery("")
   }
 
-  // Fetch wishes from Vercel KV when the component mounts
+  // Fetch lưu bút from Firestore database when the component mounts*
   useEffect(() => {
     const fetchWishes = async () => {
       setIsLoading(true)
@@ -307,13 +304,13 @@ export default function Home() {
 
         if (data.wishes && Array.isArray(data.wishes) && data.wishes.length > 0) {
           const sortedWishes = data.wishes.sort((a: WishType, b: WishType) => {
-            return parseInt(a.id) - parseInt(b.id); // Newest first
+            return parseInt(a.id) - parseInt(b.id); // Sorting from databasse: wishes > document_id> id
           });
   
           setWishes(sortedWishes);
           console.log(`Đã tải thành công ${data.wishes.length} lưu bút`)
         } else {
-          console.log("Không tìm thấy lưu bút hoặc mảng trống được trả về")
+          console.log("Không tìm thấy lưu bút hoặc Array[] được trả về")
         }
 
         console.log("")
@@ -339,7 +336,7 @@ export default function Home() {
     { id: "letter", icon: <Inbox className="mr-2 h-4 w-4" />, label: "Hộp thư đến" },
     { id: "memories", icon: <Camera className="mr-2 h-4 w-4" />, label: "Kỷ niệm" },
     { id: "timeline", icon: <Clock className="mr-2 h-4 w-4" />, label: "Dòng thời gian" },
-    { id: "wishes", icon: <Heart className="mr-2 h-4 w-4" />, label: "Lưu bút" },
+    { id: "wishes", icon: <FolderHeart className="mr-2 h-4 w-4" />, label: "Lưu bút" },
   ]
 
   // Scroll to section function
@@ -350,9 +347,8 @@ export default function Home() {
     if (!section) return
 
     const container = mainContentRef.current
-    const headerHeight = 80 // Adjust based on your header height
+    const headerHeight = 75
 
-    // Calculate the position of the section relative to the container
     const sectionRect = section.getBoundingClientRect()
     const containerRect = container.getBoundingClientRect()
     const relativeTop = sectionRect.top - containerRect.top + container.scrollTop - headerHeight
@@ -375,7 +371,7 @@ export default function Home() {
           <ImagePreview src={"/kBQrrlb.jpeg"} alt="Cô Loan" />
         </Avatar>
         <div className="absolute -bottom-2 -right-2 bg-pink-100 rounded-full p-1">
-          <Heart className="h-4 w-4 text-pink-500" />
+          <FolderHeart className="h-4 w-4 text-pink-500" />
         </div>
       </div>
       <h2 className="text-xl font-semibold mt-2">Nguyễn Thị Thuý Loan</h2>
@@ -739,7 +735,8 @@ export default function Home() {
                         value={newWish.nickname}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Biệt danh (nếu có)"
+                        placeholder="Biệt danh"
+                        required
                       />
                     </div>
                     <div>
@@ -753,7 +750,8 @@ export default function Home() {
                         value={newWish.relationship}
                         onChange={handleWishChange}
                         className="w-full px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
-                        placeholder="Bạn cùng bàn, giáo viên, v.v."
+                        placeholder="Bạn cùng bàn, bro, v.v."
+                        required
                       />
                     </div>
                     <div>
@@ -781,7 +779,7 @@ export default function Home() {
                           "Đang gửi..."
                         ) : (
                           <span className="flex items-center">
-                            <Gift className="mr-2 h-4 w-4" />
+                            <PencilLine className="mr-2 h-4 w-4" />
                             Lưu bút
                           </span>
                         )}
@@ -796,7 +794,7 @@ export default function Home() {
                           >
                             <div className="flex items-center">
                               <Sparkles className="h-4 w-4 mr-2 text-green-500" />
-                              Lời nhắn của bạn đã được thêm thành công!
+                              Lưu bút của bạn đã lưu lại vào bộ nhớ của mình ❤️
                             </div>
                           </motion.div>
                         )}
