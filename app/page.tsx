@@ -370,7 +370,7 @@ export default function Home() {
         <Avatar className="h-24 w-24 mb-4 ring-4 ring-pink-100 ring-offset-2">
           <ImagePreview src={"/kBQrrlb.jpeg"} alt="Cô Loan" />
         </Avatar>
-        <div className="absolute -bottom-2 -right-2 bg-pink-100 rounded-full p-1">
+        <div className="absolute bottom-0 -right-3 bg-pink-100 rounded-full p-1">
           <Heart className="h-4 w-4 text-pink-500" />
         </div>
       </div>
