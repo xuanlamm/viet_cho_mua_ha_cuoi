@@ -105,6 +105,10 @@ h6 {
   letter-spacing: -0.025em;
 }
 
+p {
+  word-wrap: break-word;
+}
+
 .section-heading {
   color: rgb(var(--primary));
   position: relative;
