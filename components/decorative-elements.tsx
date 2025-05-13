@@ -4,7 +4,7 @@ import { FaHeart } from "react-icons/fa";
 export function DecorativeCircle({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`absolute rounded-full opacity-20 ${className}`}
+      className={`absolute rounded-full opacity-10 ${className}`}
       style={{
         background: "radial-gradient(circle, rgba(255,138,138,0.5) 0%, rgba(138,198,255,0.3) 100%)",
       }}

@@ -541,7 +541,7 @@ export default function Home() {
             <DecorativeCircle className="dec_cir w-96 h-96 -bottom-20 -right-20" />
             <DecorativeDots className="w-full h-full opacity-50" />
             {/* Decorative background elements */}
-            <div ref={mainContentRef} className="main_content flex-1 overflow-x-hidden p-4 md:p-6">
+            <div ref={mainContentRef} className="main_content flex-1 overflow-x-hidden overflow-y-scroll p-4 pb-0 md:p-6 md:pb-0">
               {/* Teacher Profile Section - Mobile Only */}
               <motion.section
                 id="profile"
@@ -845,8 +845,18 @@ export default function Home() {
               <div>
               </div>
 
-              {/* Footer */}
-              <Footer />
+              <motion.section
+                id="footer"
+                className="relative"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div>
+                  {/* Footer */}
+                  <Footer />
+                </div>
+              </motion.section>
               
             </div>
             {/* Teacher Profile Section - Desktop Only */}

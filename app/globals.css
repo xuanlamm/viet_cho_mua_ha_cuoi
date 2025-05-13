@@ -170,16 +170,16 @@ img {
   transition: flickerAnimation 0.5s infinite;
 }
 
-footer {
+.footer-section {
   background: #ff78b2;
-  background: linear-gradient(180deg, rgba(255, 120, 178, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(180deg, rgba(255, 120, 178, 0.025) 0%, rgba(255, 255, 255, 0) 100%);
   color: rgb(var(--foreground));
   text-align: center;
-  padding: 1rem 0;
-  border-top: 1px solid rgba(var(--border), 0.8);
+  padding: 2rem 0;
+  border-top: 1px solid rgba(var(--primary), 0.15);
 }
 
-footer a {
+.footer-section a {
   color: rgb(var(--primary));
   text-decoration: none;
   transition: color 0.3s ease;
@@ -247,6 +247,10 @@ footer a {
   border-left: 2px solid rgb(var(--primary));
 }
 
+* {
+  border-color: rgba(var(--primary), 0.15)
+}
+
 /* Image preview styles */
 .image-preview-trigger {
   cursor: pointer;
@@ -282,6 +286,10 @@ footer a {
 
   section[id] {
     min-height: 50vh;
+  }
+
+  section[id="footer"] {
+    min-height: 22vh;
   }
 
   .nav-item-active {
