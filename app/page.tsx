@@ -102,62 +102,85 @@ export default function Home() {
   }
 
   const handleWishSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
+    e.preventDefault();
+  
     // Simple validation
-    if (!newWish.name || !newWish.message) return
-
-    setIsSubmitting(true)
-
+    if (!newWish.name || !newWish.message) return;
+  
+    setIsSubmitting(true);
+  
     try {
-      // Send the wish to the API
+      const isLocked = newWish.name.trim() === "Thỏ Phưn";
+  
       const response = await fetch("/api/wishes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newWish),
-      })
-
+        body: JSON.stringify({ ...newWish, isLocked }),
+      });
+  
       if (response.ok) {
-        const result = await response.json()
-
+        const result = await response.json();
+  
         // Add the new wish to the local state
         setWishes((prev) => [
           ...prev,
           {
-            id: result.wish.id || Date.now().toString(),
-            ...newWish,
-            date:
-              result.wish.date ||
-              new Date().toLocaleDateString("vi-VN", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              }),
+            ...result.wish,
           },
-        ])
-
+        ]);
+  
         // Show success message
-        setSubmitSuccess(true)
-        setTimeout(() => setSubmitSuccess(false), 3000)
-
+        setSubmitSuccess(true);
+        setTimeout(() => setSubmitSuccess(false), 3000);
+  
         // Reset form
         setNewWish({
           name: "",
           nickname: "",
           relationship: "",
           message: "",
-        })
+        });
       } else {
-        console.error("Không thể gửi lưu bút")
+        console.error("Không thể gửi lưu bút");
       }
     } catch (error) {
-      console.error("Lỗi khi gửi lưu bút:", error)
+      console.error("Lỗi khi gửi lưu bút:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
+
+  // State to track unlocked wishes
+    const [unlockedWishes, setUnlockedWishes] = useState<Record<string, boolean>>({});
+    const [unlockError, setUnlockError] = useState<Record<string, string>>({});
+    
+    const handleUnlockWish = async (wishId: string, password: string) => {
+      if (!password.trim()) {
+        setUnlockError((prev) => ({ ...prev, [wishId]: "Vui lòng nhập mật khẩu!" }));
+        return;
+      }
+      try {
+        const response = await fetch("/api/wishes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: wishId, password }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          setUnlockedWishes((prev) => ({ ...prev, [wishId]: true }));
+          setUnlockError((prev) => ({ ...prev, [wishId]: "" }));
+        } else {
+          setUnlockError((prev) => ({ ...prev, [wishId]: result.error || "Mật khẩu không đúng!" }));
+        }
+      } catch (error) {
+        setUnlockError((prev) => ({ ...prev, [wishId]: "Có lỗi xảy ra!" }));
+        console.error("Unlock Error:", error);
+      }
+    };
 
   // Perform search with the given query
   const performSearch = (query: string) => {
@@ -299,7 +322,8 @@ export default function Home() {
         }
 
         const data = await response.json()
-        console.log("Dữ liệu lưu bút đã nhận:", data)
+        const unlockedWishes = data.wishes.filter((wish: WishType) => !wish.isLocked);
+        console.log("Dữ liệu lưu bút đã nhận:", unlockedWishes);
 
         if (data.wishes && Array.isArray(data.wishes) && data.wishes.length > 0) {
           const sortedWishes = data.wishes.sort((a: WishType, b: WishType) => {
@@ -307,7 +331,7 @@ export default function Home() {
           });
   
           setWishes(sortedWishes);
-          console.log(`Đã tải thành công ${data.wishes.length} lưu bút`)
+          console.log(`Đã tải thành công ${data.wishes.filter((wish: WishType) => !wish.isLocked).length} lưu bút`);
         } else {
           console.log("Không tìm thấy lưu bút hoặc Array[] được trả về")
         }
@@ -836,7 +860,38 @@ export default function Home() {
                           </div>
                           <span className="text-xs/[24px] text-gray-400 top-0.5 relative">{wish.date}</span>
                         </div>
+                        {wish.isLocked && !unlockedWishes[wish.id] ? (
+                        <div>
+                          <p className="text-red-500">Nội dung lưu bút này đã bị khóa.</p>
+                          <input
+                            type="password"
+                            placeholder="Nhập mật khẩu để mở"
+                            className="mt-2 px-3 py-2 border border-pink-100 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleUnlockWish(wish.id, (e.target as HTMLInputElement).value);
+                              }
+                            }}
+                          />
+                          <AnimatePresence>
+                            {unlockError[wish.id] && (
+                              <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0 }}
+                              className="max-w-fit relative top-full left-0 right-0 mt-2 p-2 bg-red-50 text-red-700 text-base rounded-md border border-red-200"
+                              >
+                                <div className="flex items-center">
+                                <p className="text-red-500 text-sm mt-1">{unlockError[wish.id]}</p>
+                              </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ) : (
                         <p className="text-gray-700">{wish.message}</p>
+                      )}
                       </motion.div>
                     ))
                   )}
@@ -880,6 +935,7 @@ interface WishType {
   relationship?: string
   message: string
   date: string
+  isLocked?: boolean // Added property to indicate if the wish is locked
 }
 
 interface MemoryCardProps {

@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
 import { firestore } from "@/lib/firebase";
 
 const COLLECTION_NAME = "wishes";
+const WISHES_PASSWORD = process.env.WISHES_PASSWORD;
 
 // GET handler to retrieve all wishes
 export async function GET() {
@@ -22,18 +23,26 @@ export async function GET() {
   }
 }
 
-// POST handler to add a new wish
+// POST handler
 export async function POST(request: Request) {
   try {
+    const { id, password, ...wishData } = await request.json();
+
+    if (password) {
+      if (password === WISHES_PASSWORD) {
+        return NextResponse.json({ success: true });
+      } else {
+        return NextResponse.json({ success: false, error: "Sai mật khẩu" }, { status: 401 });
+      }
+    }
+
+    // Adding a new wish to Firestore
     console.log("API: Đã nhận yêu cầu gửi đóng góp");
 
-    const wish = await request.json();
-
-    // Add a new wish to Firestore
     const newWishRef = firestore.collection(COLLECTION_NAME).doc();
     const newWish = {
       id: Date.now().toString(),
-      ...wish,
+      ...wishData,
       date: new Date().toLocaleDateString("vi-VN", {
         month: "short",
         day: "numeric",

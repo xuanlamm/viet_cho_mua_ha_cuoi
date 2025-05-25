@@ -7,10 +7,10 @@ export async function POST(request: Request) {
     if (password === process.env.LETTER_PASSWORD) {
       return NextResponse.json({ success: true });
     } else {
-      return NextResponse.json({ success: false, error: "Incorrect password" }, { status: 401 });
+      return NextResponse.json({ success: false, error: "Sai mật khẩu" }, { status: 401 });
     }
   } catch (error) {
     console.error("Error verifying password:", error);
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Lỗi không xác định" }, { status: 500 });
   }
 }
